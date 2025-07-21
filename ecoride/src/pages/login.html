@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,6 +7,110 @@
     <title>Connexion - ECORIDE</title>
     <link rel="stylesheet" href="../styles/main.css">
     <link rel="stylesheet" href="../styles/navfooter.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f2efc6 0%, #e8f5e8 100%);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .ecoride-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #205c2c 0%, #2d7a35 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .login-container h2 {
+            color: #205c2c;
+            font-size: 24px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #205c2c;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #205c2c;
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #205c2c 0%, #2d7a35 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .login-btn:hover {
+            background: linear-gradient(135deg, #1e5128 0%, #246b2a 100%);
+            transform: translateY(-2px);
+        }
+        
+        .signup-link {
+            margin-top: 25px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .signup-link a {
+            color: #205c2c;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        #login-message {
+            margin-bottom: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
@@ -15,8 +119,8 @@
             <img src="assets/image voiture.png" alt="image voiture" class="navbar-logo">
         </div>
         <div class="navbar-center">
-            <a href="../../index.html" class="navbar-btn">Accueil</a>
-            <a href="covoiturage.html" class="navbar-btn">Covoiturage</a>
+            <a href="../index.html" class="navbar-btn">Accueil</a>
+            <a href="covoiturage-new.html" class="navbar-btn">Covoiturage</a>
             <a href="#" class="navbar-btn">Contact</a>
         </div>
         <div class="navbar-right" style="position:relative;">
@@ -29,7 +133,7 @@
                 </span>
                 <div class="dropdown-content">
                     <a href="login.html">Connexion</a>
-                    <a href="signup.html">Inscription</a>
+                    <a href="signup-new.html">Inscription</a>
                 </div>
             </div>
             <img src="assets/image energie.png" alt="Energie" class="navbar-energie">
@@ -37,65 +141,76 @@
     </nav>
 
     <div class="login-container">
-        <h2>Connexion</h2>
-        <div id="login-message" style="display:none; padding:10px; margin:10px 0; border-radius:5px;"></div>
+        <div class="ecoride-logo">🌱</div>
+        <h2>Connexion à EcoRide</h2>
+        
+        <div id="login-message"></div>
+        
         <form id="login-form">
-            <label for="email">Email :</label>
-            <input type="email" id="email" name="email" required>
+            <div class="form-group">
+                <label for="email">Adresse e-mail</label>
+                <input type="email" id="email" name="email" required placeholder="votre@email.com">
+            </div>
             
-            <label for="password">Mot de passe :</label>
-            <input type="password" id="password" name="password" required>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required placeholder="Votre mot de passe">
+            </div>
             
-            <button type="submit">Se connecter</button>
+            <button type="submit" class="login-btn">Se connecter</button>
         </form>
         
-        <p style="text-align: center; margin-top: 20px;">
-            Pas encore de compte ? <a href="signup.html">Inscrivez-vous</a>
+        <p class="signup-link">
+            Pas encore de compte ? <a href="signup-new.html">Créer un compte</a>
         </p>
-        
-        <!-- Informations de test (à supprimer en production) -->
-        <div style="margin-top: 30px; padding: 10px; background: #f0f0f0; border-radius: 5px; font-size: 12px;">
-            <strong>Comptes de test :</strong><br>
-            Conducteur : jean.dupont@test.com / password123<br>
-            Voyageur : marie.martin@test.com / password123
-        </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="../scripts/auth.js"></script>
+    <script src="../scripts/supabase-client.js"></script>
+    <script src="../scripts/auth-new.js"></script>
     <script>
-        document.getElementById('login-form').addEventListener('submit', function(e) {
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const messageDiv = document.getElementById('login-message');
             
-            const result = auth.login(email, password);
-            
-            // Afficher le message
+            // Afficher le message de chargement
             messageDiv.style.display = 'block';
-            messageDiv.textContent = result.message;
-            messageDiv.style.backgroundColor = result.success ? '#d4edda' : '#f8d7da';
-            messageDiv.style.color = result.success ? '#155724' : '#721c24';
-            messageDiv.style.border = result.success ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+            messageDiv.textContent = 'Connexion en cours...';
+            messageDiv.style.backgroundColor = '#d1ecf1';
+            messageDiv.style.color = '#0c5460';
+            messageDiv.style.border = '1px solid #bee5eb';
             
-            if (result.success) {
-                // Rediriger après 1 seconde
-                setTimeout(() => {
-                    window.location.href = result.redirectUrl;
-                }, 1000);
+            try {
+                const result = await auth.login(email, password);
+                
+                // Afficher le message
+                messageDiv.textContent = result.message;
+                messageDiv.style.backgroundColor = result.success ? '#d4edda' : '#f8d7da';
+                messageDiv.style.color = result.success ? '#155724' : '#721c24';
+                messageDiv.style.border = result.success ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+                
+                if (result.success) {
+                    setTimeout(() => {
+                        window.location.href = result.redirectUrl;
+                    }, 1000);
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Erreur de connexion. Veuillez réessayer.';
+                messageDiv.style.backgroundColor = '#f8d7da';
+                messageDiv.style.color = '#721c24';
+                messageDiv.style.border = '1px solid #f5c6cb';
             }
         });
 
         // Vérifier si l'utilisateur est déjà connecté
         document.addEventListener('DOMContentLoaded', function() {
             if (auth.isLoggedIn()) {
-                const currentUser = auth.getCurrentUser();
-                const redirectUrl = currentUser.role === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html';
-                window.location.href = redirectUrl;
+                auth.redirectToDashboard();
             }
         });
     </script>
 </body>
 </html>
+

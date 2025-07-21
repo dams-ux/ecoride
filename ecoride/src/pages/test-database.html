@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Base de Données - ECORIDE</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .user-card { background: #f9f9f9; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        button { padding: 10px 15px; margin: 5px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🔬 Test Base de Données ECORIDE</h1>
+
+    <div class="section">
+        <h2>📊 État de la Base de Données</h2>
+        <div id="db-status">Chargement...</div>
+        <button onclick="loadDatabaseData()">Recharger les données</button>
+    </div>
+
+    <div class="section">
+        <h2>🧑‍💼 Test d'Authentification</h2>
+        <div>
+            <h3>Conducteurs disponibles:</h3>
+            <button onclick="testLogin('pauldupont@hotmail.fr', 'Mavoiture6+')">Se connecter comme Paul Dupont</button>
+            <button onclick="testLogin('jeanrive@hotmail.fr', 'password123')">Se connecter comme Jean Rive</button>
+        </div>
+        <div>
+            <h3>Voyageurs disponibles:</h3>
+            <button onclick="testLogin('juliepop@hotmail.fr', 'Monvoyage6+')">Se connecter comme Julie Pop</button>
+        </div>
+        <div id="login-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>🚗 Données Conducteurs</h2>
+        <div id="conducteurs-list"></div>
+    </div>
+
+    <div class="section">
+        <h2>🧳 Données Voyageurs</h2>
+        <div id="voyageurs-list"></div>
+    </div>
+
+    <div class="section">
+        <h2>🛣️ Trajets Disponibles</h2>
+        <div id="trajets-list"></div>
+    </div>
+
+    <div class="section">
+        <h2>🚙 Véhicules</h2>
+        <div id="vehicules-list"></div>
+    </div>
+
+    <script src="../scripts/database.js"></script>
+    <script src="../scripts/auth.js"></script>
+    <script>
+        function loadDatabaseData() {
+            const statusDiv = document.getElementById('db-status');
+            
+            if (typeof database === 'undefined') {
+                statusDiv.innerHTML = '<span class="error">❌ Base de données non disponible</span>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<span class="success">✅ Base de données chargée et opérationnelle</span>';
+            
+            // Afficher conducteurs
+            const conducteursDiv = document.getElementById('conducteurs-list');
+            conducteursDiv.innerHTML = database.conducteurs.map(c => `
+                <div class="user-card">
+                    <strong>ID:</strong> ${c.id} | 
+                    <strong>Nom:</strong> ${c.prenom} ${c.nom} | 
+                    <strong>Email:</strong> ${c.email} | 
+                    <strong>Photo:</strong> ${c.photo}
+                </div>
+            `).join('');
+
+            // Afficher voyageurs  
+            const voyageursDiv = document.getElementById('voyageurs-list');
+            voyageursDiv.innerHTML = database.voyageurs.map(v => `
+                <div class="user-card">
+                    <strong>ID:</strong> ${v.id} | 
+                    <strong>Nom:</strong> ${v.prenom} ${v.nom} | 
+                    <strong>Email:</strong> ${v.email} | 
+                    <strong>Photo:</strong> ${v.photo}
+                </div>
+            `).join('');
+
+            // Afficher trajets
+            const trajetsDiv = document.getElementById('trajets-list');
+            const trajetsWithDetails = database.getTrajetsDisponibles();
+            trajetsDiv.innerHTML = trajetsWithDetails.map(t => `
+                <div class="user-card">
+                    <strong>${t.depart} → ${t.arrivee}</strong><br>
+                    Conducteur: ${t.conducteur_nom} | Prix: ${t.prix}€ | 
+                    Places: ${t.places_disponibles} | Départ: ${t.date_depart}
+                </div>
+            `).join('');
+
+            // Afficher véhicules
+            const vehiculesDiv = document.getElementById('vehicules-list');
+            vehiculesDiv.innerHTML = database.vehicules.map(v => `
+                <div class="user-card">
+                    <strong>${v.marque} ${v.modele}</strong> (${v.plaque})<br>
+                    Conducteur ID: ${v.conducteur_id} | Couleur: ${v.couleur} | 
+                    Année: ${v.annee} | Énergie: ${v.energie}
+                </div>
+            `).join('');
+        }
+
+        function testLogin(email, password) {
+            const resultDiv = document.getElementById('login-result');
+            
+            if (typeof auth === 'undefined') {
+                resultDiv.innerHTML = '<span class="error">❌ Système d\'authentification non disponible</span>';
+                return;
+            }
+
+            const result = auth.login(email, password);
+            
+            if (result.success) {
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        ✅ <strong>Connexion réussie !</strong><br>
+                        Utilisateur: ${auth.getCurrentUser().prenom} ${auth.getCurrentUser().nom}<br>
+                        Rôle: ${auth.getCurrentUser().role}<br>
+                        Redirection: ${result.redirectUrl}
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `<div class="error">❌ ${result.message}</div>`;
+            }
+        }
+
+        // Charger les données au démarrage
+        document.addEventListener('DOMContentLoaded', loadDatabaseData);
+
+        // Debug dans la console
+        console.log('=== ECORIDE DATABASE TEST ===');
+        if (typeof database !== 'undefined') {
+            database.debugShowData();
+        }
+        if (typeof auth !== 'undefined') {
+            auth.debugShowData();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Responsive - EcoRide</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+    <style>
+        /* Navbar Mobile Responsive Style iPhone */
+        .navbar-ecoride {
+            background: #205c2c;
+            color: white;
+            padding: 0 20px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .navbar-brand-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Menu desktop */
+        .navbar-center {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .navbar-btn {
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .navbar-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        .navbar-btn.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Menu mobile hamburger */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Menu mobile overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100%;
+            background: #205c2c;
+            z-index: 999;
+            transition: right 0.3s ease;
+            box-shadow: -3px 0 10px rgba(0,0,0,0.2);
+        }
+
+        .mobile-menu.open {
+            right: 0;
+        }
+
+        .mobile-menu-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-menu-close:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .mobile-menu-content {
+            padding: 20px 0;
+        }
+
+        .mobile-menu-item {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px 25px;
+            font-size: 1.1em;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-item:hover {
+            background: rgba(255,255,255,0.1);
+            padding-left: 35px;
+        }
+
+        .mobile-menu-item.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Dropdown utilisateur */
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dropdown-user {
+            position: relative;
+        }
+
+        .navbar-icon-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-icon-user:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .user-avatar {
+            height: 35px;
+            width: 35px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .dropdown-content {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-top: 10px;
+        }
+
+        .dropdown-user:hover .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-content a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-content a:first-child {
+            border-radius: 10px 10px 0 0;
+        }
+
+        .dropdown-content a:last-child {
+            border-radius: 0 0 10px 10px;
+        }
+
+        .dropdown-content a:hover {
+            background: #f8f9fa;
+            color: #205c2c;
+        }
+
+        .navbar-energie {
+            height: 35px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .navbar-energie:hover {
+            opacity: 1;
+        }
+
+        /* Responsive breakpoints */
+        @media (max-width: 768px) {
+            .navbar-center {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .mobile-menu-overlay.active {
+                display: block;
+            }
+
+            .navbar-right {
+                gap: 10px;
+            }
+
+            .navbar-left {
+                flex: 1;
+            }
+
+            .dropdown-content {
+                position: fixed;
+                right: 20px;
+                top: 80px;
+                min-width: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-ecoride {
+                padding: 0 15px;
+                height: 60px;
+            }
+
+            .navbar-logo {
+                height: 30px;
+            }
+
+            .navbar-brand-text {
+                font-size: 1.2em;
+            }
+
+            .mobile-menu {
+                width: 100%;
+                right: -100%;
+            }
+
+            .user-avatar {
+                height: 30px;
+                width: 30px;
+            }
+
+            .navbar-energie {
+                height: 30px;
+            }
+        }
+
+        /* Animation pour les icônes */
+        .nav-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu-toggle:hover .nav-icon {
+            transform: scale(1.1);
+        }
+
+        /* Indicateur de page active */
+        .page-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: #4CAF50;
+            border-radius: 2px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .navbar-btn.active .page-indicator {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar responsive avec style iPhone -->
+    <nav class="navbar-ecoride">
+        <!-- Logo et marque -->
+        <div class="navbar-left">
+            <img src="assets/image voiture.png" alt="EcoRide Logo" class="navbar-logo">
+            <a href="../index.html" class="navbar-brand-text">EcoRide</a>
+        </div>
+
+        <!-- Menu desktop -->
+        <div class="navbar-center">
+            <a href="../index.html" class="navbar-btn" data-page="home">
+                Accueil
+                <div class="page-indicator"></div>
+            </a>
+            <a href="covoiturage-new.html" class="navbar-btn" data-page="covoiturage">
+                Covoiturage
+                <div class="page-indicator"></div>
+            </a>
+            <a href="#contact" class="navbar-btn" data-page="contact">
+                Contact
+                <div class="page-indicator"></div>
+            </a>
+        </div>
+
+        <!-- Section droite avec utilisateur et menu mobile -->
+        <div class="navbar-right">
+            <!-- Dropdown utilisateur -->
+            <div class="dropdown-user">
+                <span class="navbar-icon-user">
+                    <img src="assets/Icon.png" alt="Profil utilisateur" class="user-avatar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" class="nav-icon">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content">
+                    <a href="login.html">
+                        <span>Connexion</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <polyline points="9 6 15 12 9 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <a href="signup-new.html">
+                        <span>Inscription</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <polyline points="9 6 15 12 9 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Icône énergie -->
+            <img src="assets/image energie.png" alt="Énergie verte" class="navbar-energie">
+
+            <!-- Bouton menu mobile -->
+            <button class="mobile-menu-toggle" aria-label="Menu mobile">
+                <svg width="24" height="24" viewBox="0 0 24 24" class="nav-icon">
+                    <line x1="3" y1="6" x2="21" y2="6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="3" y1="12" x2="21" y2="12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="3" y1="18" x2="21" y2="18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Overlay pour menu mobile -->
+    <div class="mobile-menu-overlay"></div>
+
+    <!-- Menu mobile coulissant -->
+    <div class="mobile-menu">
+        <div class="mobile-menu-header">
+            <div class="navbar-left">
+                <img src="assets/image voiture.png" alt="EcoRide" class="navbar-logo">
+                <span style="color: white; font-weight: bold;">EcoRide</span>
+            </div>
+            <button class="mobile-menu-close" aria-label="Fermer menu">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <line x1="18" y1="6" x2="6" y2="18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="6" y1="6" x2="18" y2="18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="mobile-menu-content">
+            <a href="../index.html" class="mobile-menu-item" data-page="home">
+                🏠 Accueil
+            </a>
+            <a href="covoiturage-new.html" class="mobile-menu-item" data-page="covoiturage">
+                🚗 Covoiturage
+            </a>
+            <a href="#contact" class="mobile-menu-item" data-page="contact">
+                📧 Contact
+            </a>
+            <a href="login.html" class="mobile-menu-item">
+                🔐 Connexion
+            </a>
+            <a href="signup-new.html" class="mobile-menu-item">
+                ✨ Inscription
+            </a>
+            <a href="comptecon-new.html" class="mobile-menu-item">
+                👤 Mon Compte
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Gestion du menu mobile responsive
+        class ResponsiveNavbar {
+            constructor() {
+                this.mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+                this.mobileMenu = document.querySelector('.mobile-menu');
+                this.mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+                this.mobileMenuClose = document.querySelector('.mobile-menu-close');
+                
+                this.init();
+                this.setActivePage();
+            }
+
+            init() {
+                // Ouvrir le menu mobile
+                this.mobileMenuToggle.addEventListener('click', () => {
+                    this.openMobileMenu();
+                });
+
+                // Fermer le menu mobile
+                this.mobileMenuClose.addEventListener('click', () => {
+                    this.closeMobileMenu();
+                });
+
+                // Fermer en cliquant sur l'overlay
+                this.mobileMenuOverlay.addEventListener('click', () => {
+                    this.closeMobileMenu();
+                });
+
+                // Fermer avec la touche Escape
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeMobileMenu();
+                    }
+                });
+
+                // Fermer le menu mobile lors du clic sur un lien
+                document.querySelectorAll('.mobile-menu-item').forEach(link => {
+                    link.addEventListener('click', () => {
+                        this.closeMobileMenu();
+                    });
+                });
+
+                // Gestion responsive
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 768) {
+                        this.closeMobileMenu();
+                    }
+                });
+            }
+
+            openMobileMenu() {
+                this.mobileMenu.classList.add('open');
+                this.mobileMenuOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                
+                // Animation d'entrée
+                setTimeout(() => {
+                    this.mobileMenu.style.right = '0';
+                }, 10);
+            }
+
+            closeMobileMenu() {
+                this.mobileMenu.classList.remove('open');
+                this.mobileMenuOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+                this.mobileMenu.style.right = '-100%';
+            }
+
+            setActivePage() {
+                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+                
+                // Mapping des pages
+                const pageMap = {
+                    'index.html': 'home',
+                    'covoiturage.html': 'covoiturage',
+                    'covoiturage-new.html': 'covoiturage',
+                    'contact.html': 'contact'
+                };
+
+                const activePage = pageMap[currentPage] || 'home';
+                
+                // Marquer la page active dans le menu desktop
+                document.querySelectorAll('.navbar-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.page === activePage) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                // Marquer la page active dans le menu mobile
+                document.querySelectorAll('.mobile-menu-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.page === activePage) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        }
+
+        // Initialiser la navbar responsive
+        document.addEventListener('DOMContentLoaded', () => {
+            new ResponsiveNavbar();
+        });
+
+        // Animation au scroll (bonus)
+        let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar-ecoride');
+            
+            if (window.scrollY > lastScrollY && window.scrollY > 100) {
+                // Scroll vers le bas - cacher la navbar
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                // Scroll vers le haut - montrer la navbar
+                navbar.style.transform = 'translateY(0)';
+            }
+            
+            lastScrollY = window.scrollY;
+        });
+    </script>
+</body>
+</html>

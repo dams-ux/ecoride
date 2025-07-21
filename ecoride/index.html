@@ -17,7 +17,7 @@
         </div>
         <div class="navbar-center">
             <a href="index.html" class="navbar-btn">Accueil</a>
-            <a href="src/pages/covoiturage.html" class="navbar-btn">Covoiturage</a>
+            <a href="src/pages/covoiturage-new.html" class="navbar-btn">Covoiturage</a>
             <a href="#" class="navbar-btn">Contact</a>
         </div>
         <div class="navbar-right" style="position:relative;">
@@ -30,8 +30,8 @@
                     </svg>
                 </span>
                 <div class="dropdown-content">
-                    <a href="src/pages/login.html">Connexion <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;"><polyline points="9 6 15 12 9 18" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                    <a href="src/pages/signup.html">Inscription <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;"><polyline points="9 6 15 12 9 18" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                    <a href="src/pages/login.html">Connexion</a>
+                    <a href="src/pages/signup-new.html">Inscription</a>
                 </div>
             </div>
             <img src="src/pages/assets/image energie.png" alt="Energie" class="navbar-energie">
@@ -52,16 +52,17 @@
 
         <label for="passagers" style="position:absolute;left:-9999px;">Nombre de passagers</label>
         <select id="passagers" title="Nombre de passagers">
-            <option>Passagers</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3+</option>
+            <option value="">Passagers</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4+</option>
         </select>
 
         <label for="date" style="position:absolute;left:-9999px;">Date du trajet</label>
         <input id="date" type="date" title="Date du trajet">
 
-        <button>🔍</button>
+        <button onclick="searchFromHome()">🔍 Rechercher</button>
     </div>
 
     <!-- Section principale -->
@@ -98,6 +99,40 @@
     <!-- Scripts -->
     <script src="src/scripts/fonction.js"></script>
     <script src="src/scripts/trajet.js"></script>
+    <script>
+        // Fonction de recherche depuis la page d'accueil
+        function searchFromHome() {
+            const depart = document.getElementById('depart').value.trim();
+            const destination = document.getElementById('destination').value.trim();
+            const passagers = document.getElementById('passagers').value;
+            const date = document.getElementById('date').value;
+
+            // Validation basique
+            if (!depart || !destination) {
+                alert('Veuillez renseigner au minimum un point de départ et une destination.');
+                return;
+            }
+
+            // Construire l'URL avec les paramètres de recherche
+            const searchParams = new URLSearchParams();
+            searchParams.set('depart', depart);
+            searchParams.set('destination', destination);
+            if (passagers) searchParams.set('passagers', passagers);
+            if (date) searchParams.set('date', date);
+            searchParams.set('autoSearch', 'true');
+
+            // Rediriger vers la page covoiturage avec les paramètres
+            window.location.href = `src/pages/covoiturage-new.html?${searchParams.toString()}`;
+        }
+
+        // Permettre la recherche en appuyant sur Entrée
+        document.getElementById('depart').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchFromHome();
+        });
+        document.getElementById('destination').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchFromHome();
+        });
+    </script>
     <script src="src/scripts/auth.js"></script>
     <script>
         // Mettre à jour l'interface utilisateur selon l'état de connexion
@@ -108,17 +143,25 @@
                 const userRole = currentUser.role;
                 const accountPage = userRole === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html';
                 
+                // Utilisateur connecté : afficher seulement Mon compte et Déconnexion
                 dropdownContent.innerHTML = `
-                    <a href="src/pages/${accountPage}">Mon compte</a>
-                    <a href="#" onclick="handleLogout()">Déconnexion</a>
+                    <a href="src/pages/${accountPage}">Mon compte (${currentUser.prenom})</a>
+                    <button onclick="handleLogout()" style="background: #f44336; color: white; border: none; cursor: pointer; text-align: left; width: 100%; padding: 8px 12px; font-size: 14px; border-radius: 4px;">🚪 Déconnexion</button>
+                `;
+            } else {
+                // Utilisateur non connecté : afficher Connexion et Inscription
+                dropdownContent.innerHTML = `
+                    <a href="src/pages/login.html">Connexion</a>
+                    <a href="src/pages/signup.html">Inscription</a>
                 `;
             }
         }
 
         // Fonction de déconnexion
         function handleLogout() {
-            if (auth) {
+            if (auth && confirm('Voulez-vous vraiment vous déconnecter ?')) {
                 auth.logout();
+                alert('Déconnexion réussie !');
                 updateNavbarUI();
                 window.location.reload();
             }

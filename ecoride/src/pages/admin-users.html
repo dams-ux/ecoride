@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Utilisateurs - EcoRide Admin</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+    <link rel="stylesheet" href="../styles/admin.css">
+</head>
+<body>
+    <!-- Navbar Admin -->
+    <nav class="navbar-ecoride">
+        <div class="navbar-left">
+            <img src="assets/image voiture.png" alt="EcoRide" class="navbar-logo">
+            <span style="color: white; font-weight: bold; margin-left: 0.5rem;">ADMIN</span>
+        </div>
+        <div class="navbar-center">
+            <a href="../index.html" class="navbar-btn">🏠 Accueil</a>
+            <a href="admin-dashboard.html" class="navbar-btn">📊 Dashboard</a>
+            <a href="admin-employees.html" class="navbar-btn">👥 Employés</a>
+            <a href="admin-users.html" class="navbar-btn active">👤 Utilisateurs</a>
+        </div>
+        <div class="navbar-right">
+            <div class="dropdown-user">
+                <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                    <img src="assets/Icon.png" alt="Admin" style="height:32px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle;">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content">
+                    <a href="admin-profile.html">Mon profil</a>
+                    <a href="#" onclick="handleLogout()">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1 class="admin-title">Gestion des Utilisateurs</h1>
+            <p class="admin-subtitle">Gérer les conducteurs, voyageurs et leurs avis</p>
+        </div>
+
+        <!-- Statistiques utilisateurs -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Conducteurs actifs</div>
+                    <div class="stat-icon" style="background: #3b82f6;">🚗</div>
+                </div>
+                <div class="stat-value" id="active-drivers">0</div>
+                <div class="stat-trend positive">+5 cette semaine</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Voyageurs actifs</div>
+                    <div class="stat-icon" style="background: #10b981;">🧳</div>
+                </div>
+                <div class="stat-value" id="active-passengers">0</div>
+                <div class="stat-trend positive">+12 cette semaine</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Avis en attente</div>
+                    <div class="stat-icon" style="background: #f59e0b;">⭐</div>
+                </div>
+                <div class="stat-value" id="pending-reviews">0</div>
+                <div class="stat-trend">À modérer</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Signalements</div>
+                    <div class="stat-icon" style="background: #ef4444;">🚨</div>
+                </div>
+                <div class="stat-value" id="reports-count">0</div>
+                <div class="stat-trend">À traiter</div>
+            </div>
+        </div>
+
+        <!-- Filtres et recherche -->
+        <div class="management-section">
+            <div class="section-header">
+                <h2 class="section-title">Filtres</h2>
+            </div>
+            
+            <div style="padding: 1.5rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label class="form-label">Type d'utilisateur</label>
+                        <select class="form-input" id="user-type-filter" title="Filtrer par type d'utilisateur" onchange="applyFilters()">
+                            <option value="">Tous</option>
+                            <option value="conducteur">Conducteurs</option>
+                            <option value="voyageur">Voyageurs</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Status</label>
+                        <select class="form-input" id="status-filter" title="Filtrer par statut utilisateur" onchange="applyFilters()">
+                            <option value="">Tous</option>
+                            <option value="active">Actifs</option>
+                            <option value="suspended">Suspendus</option>
+                            <option value="pending">En attente</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Recherche</label>
+                        <input type="text" class="form-input" id="search-users" placeholder="Nom, email..." onkeyup="applyFilters()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des utilisateurs -->
+        <div class="management-section">
+            <div class="section-header">
+                <h2 class="section-title">Utilisateurs</h2>
+                <div class="section-actions">
+                    <span id="users-count" style="color: white;">0 utilisateurs</span>
+                </div>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Nom complet</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Note moyenne</th>
+                            <th>Inscrit le</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem;">
+                                <div class="loading">Chargement des utilisateurs...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section des avis à modérer -->
+        <div class="management-section">
+            <div class="section-header">
+                <h2 class="section-title">Avis à modérer</h2>
+                <button class="btn btn-primary" onclick="loadPendingReviews()">🔄 Actualiser</button>
+            </div>
+            
+            <div id="reviews-section" style="padding: 1.5rem;">
+                <div class="loading">Chargement des avis...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de détails utilisateur -->
+    <div class="modal" id="user-details-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Détails de l'utilisateur</h3>
+                <button class="modal-close" onclick="closeUserModal()">&times;</button>
+            </div>
+            <div id="user-details-content">
+                <!-- Contenu chargé dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de validation d'avis -->
+    <div class="modal" id="review-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Modération d'avis</h3>
+                <button class="modal-close" onclick="closeReviewModal()">&times;</button>
+            </div>
+            <div id="review-content">
+                <!-- Contenu chargé dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../scripts/supabase-client.js"></script>
+    <script src="../scripts/auth-new.js"></script>
+    <script>
+        // 👤 Gestion des utilisateurs
+        class UserManager {
+            constructor() {
+                this.users = [];
+                this.reviews = [];
+                this.filteredUsers = [];
+                this.init();
+            }
+
+            async init() {
+                await this.loadUsers();
+                await this.loadReviews();
+                this.updateStats();
+                this.displayUsers();
+                this.displayPendingReviews();
+            }
+
+            // Charger les utilisateurs
+            async loadUsers() {
+                try {
+                    // Simuler des données d'utilisateurs
+                    this.users = [
+                        {
+                            id: 1,
+                            prenom: 'Jean',
+                            nom: 'Dupont',
+                            email: 'jean.dupont@email.com',
+                            type: 'conducteur',
+                            status: 'active',
+                            photo: 'assets/default-avatar.svg',
+                            note_moyenne: 4.8,
+                            nb_trajets: 45,
+                            date_inscription: '2024-01-15',
+                            telephone: '0123456789',
+                            vehicule: 'Renault Clio - Essence'
+                        },
+                        {
+                            id: 2,
+                            prenom: 'Marie',
+                            nom: 'Martin',
+                            email: 'marie.martin@email.com',
+                            type: 'voyageur',
+                            status: 'active',
+                            photo: 'assets/default-avatar.svg',
+                            note_moyenne: 4.5,
+                            nb_trajets: 23,
+                            date_inscription: '2024-02-20',
+                            telephone: '0123456790'
+                        },
+                        {
+                            id: 3,
+                            prenom: 'Paul',
+                            nom: 'Durand',
+                            email: 'paul.durand@email.com',
+                            type: 'conducteur',
+                            status: 'suspended',
+                            photo: 'assets/default-avatar.svg',
+                            note_moyenne: 3.2,
+                            nb_trajets: 12,
+                            date_inscription: '2024-03-10',
+                            telephone: '0123456791',
+                            vehicule: 'Peugeot 208 - Électrique',
+                            motif_suspension: 'Avis clients négatifs répétés'
+                        },
+                        {
+                            id: 4,
+                            prenom: 'Sophie',
+                            nom: 'Bernard',
+                            email: 'sophie.bernard@email.com',
+                            type: 'voyageur',
+                            status: 'active',
+                            photo: 'assets/default-avatar.svg',
+                            note_moyenne: 4.9,
+                            nb_trajets: 67,
+                            date_inscription: '2023-11-05',
+                            telephone: '0123456792'
+                        }
+                    ];
+                    
+                    this.filteredUsers = [...this.users];
+                } catch (error) {
+                    console.error('Erreur lors du chargement des utilisateurs:', error);
+                }
+            }
+
+            // Charger les avis à modérer
+            async loadReviews() {
+                try {
+                    this.reviews = [
+                        {
+                            id: 1,
+                            auteur: 'Marie Martin',
+                            cible: 'Jean Dupont',
+                            note: 5,
+                            commentaire: 'Excellent conducteur, très ponctuel et sympa !',
+                            date: '2024-07-20',
+                            status: 'pending',
+                            trajet: 'Paris → Lyon'
+                        },
+                        {
+                            id: 2,
+                            auteur: 'Paul Durand',
+                            cible: 'Sophie Bernard',
+                            note: 2,
+                            commentaire: 'Cette personne était très désagréable pendant tout le trajet. Je ne recommande pas.',
+                            date: '2024-07-19',
+                            status: 'pending',
+                            trajet: 'Marseille → Nice'
+                        },
+                        {
+                            id: 3,
+                            auteur: 'Sophie Bernard',
+                            cible: 'Jean Dupont',
+                            note: 4,
+                            commentaire: 'Bon conducteur mais un peu bavard :)',
+                            date: '2024-07-18',
+                            status: 'pending',
+                            trajet: 'Lyon → Grenoble'
+                        }
+                    ];
+                } catch (error) {
+                    console.error('Erreur lors du chargement des avis:', error);
+                }
+            }
+
+            // Mettre à jour les statistiques
+            updateStats() {
+                const activeDrivers = this.users.filter(u => u.type === 'conducteur' && u.status === 'active').length;
+                const activePassengers = this.users.filter(u => u.type === 'voyageur' && u.status === 'active').length;
+                const pendingReviews = this.reviews.filter(r => r.status === 'pending').length;
+                const reports = 2; // Simuler des signalements
+
+                document.getElementById('active-drivers').textContent = activeDrivers;
+                document.getElementById('active-passengers').textContent = activePassengers;
+                document.getElementById('pending-reviews').textContent = pendingReviews;
+                document.getElementById('reports-count').textContent = reports;
+            }
+
+            // Afficher les utilisateurs
+            displayUsers() {
+                const tbody = document.getElementById('users-table');
+                const users = this.filteredUsers;
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem;">
+                                Aucun utilisateur trouvé
+                            </td>
+                        </tr>
+                    `;
+                    document.getElementById('users-count').textContent = '0 utilisateur';
+                    return;
+                }
+
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td>
+                            <img src="${user.photo}" alt="${user.prenom}" 
+                                 style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;"
+                                 onerror="this.src='assets/default-avatar.svg'">
+                        </td>
+                        <td>${user.prenom} ${user.nom}</td>
+                        <td>${user.email}</td>
+                        <td>
+                            <span style="background: ${user.type === 'conducteur' ? '#3b82f6' : '#10b981'}; 
+                                         color: white; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8rem;">
+                                ${user.type === 'conducteur' ? '🚗 Conducteur' : '🧳 Voyageur'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${user.status === 'active' ? 'status-active' : 
+                                                     user.status === 'suspended' ? 'status-suspended' : 'status-pending'}">
+                                ${user.status === 'active' ? 'Actif' : 
+                                  user.status === 'suspended' ? 'Suspendu' : 'En attente'}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="color: ${user.note_moyenne >= 4 ? '#10b981' : user.note_moyenne >= 3 ? '#f59e0b' : '#ef4444'};">
+                                ⭐ ${user.note_moyenne}/5
+                            </span>
+                        </td>
+                        <td>${new Date(user.date_inscription).toLocaleDateString('fr-FR')}</td>
+                        <td>
+                            <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                                <button class="btn btn-primary" onclick="viewUserDetails(${user.id})" 
+                                        style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                    👁️ Voir
+                                </button>
+                                <button class="btn ${user.status === 'active' ? 'btn-danger' : 'btn-success'}" 
+                                        onclick="${user.status === 'active' ? 'suspendUser' : 'activateUser'}(${user.id})"
+                                        style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                    ${user.status === 'active' ? '🚫' : '✅'}
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('users-count').textContent = `${users.length} utilisateur${users.length > 1 ? 's' : ''}`;
+            }
+
+            // Afficher les avis en attente
+            displayPendingReviews() {
+                const container = document.getElementById('reviews-section');
+                const pendingReviews = this.reviews.filter(r => r.status === 'pending');
+
+                if (pendingReviews.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #6b7280;">Aucun avis en attente de modération.</p>';
+                    return;
+                }
+
+                container.innerHTML = pendingReviews.map(review => `
+                    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 0.5rem;">
+                            <div>
+                                <strong>${review.auteur}</strong> → <strong>${review.cible}</strong>
+                                <div style="color: #6b7280; font-size: 0.9rem;">${review.trajet} • ${new Date(review.date).toLocaleDateString('fr-FR')}</div>
+                            </div>
+                            <div style="color: ${review.note >= 4 ? '#10b981' : review.note >= 3 ? '#f59e0b' : '#ef4444'}; font-weight: bold;">
+                                ${'⭐'.repeat(review.note)} (${review.note}/5)
+                            </div>
+                        </div>
+                        <p style="margin: 0.5rem 0; font-style: italic;">"${review.commentaire}"</p>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button class="btn btn-success" onclick="approveReview(${review.id})" 
+                                    style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                ✅ Approuver
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectReview(${review.id})" 
+                                    style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                ❌ Rejeter
+                            </button>
+                            <button class="btn btn-primary" onclick="viewReviewDetails(${review.id})" 
+                                    style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                📝 Détails
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Appliquer les filtres
+            applyFilters() {
+                const typeFilter = document.getElementById('user-type-filter').value;
+                const statusFilter = document.getElementById('status-filter').value;
+                const searchQuery = document.getElementById('search-users').value.toLowerCase();
+
+                this.filteredUsers = this.users.filter(user => {
+                    const matchType = !typeFilter || user.type === typeFilter;
+                    const matchStatus = !statusFilter || user.status === statusFilter;
+                    const matchSearch = !searchQuery || 
+                        user.prenom.toLowerCase().includes(searchQuery) ||
+                        user.nom.toLowerCase().includes(searchQuery) ||
+                        user.email.toLowerCase().includes(searchQuery);
+
+                    return matchType && matchStatus && matchSearch;
+                });
+
+                this.displayUsers();
+            }
+        }
+
+        // Instance globale
+        let userManager;
+
+        // Fonctions d'interface
+        function applyFilters() {
+            userManager.applyFilters();
+        }
+
+        function viewUserDetails(userId) {
+            const user = userManager.users.find(u => u.id === userId);
+            if (!user) return;
+
+            const modalContent = document.getElementById('user-details-content');
+            modalContent.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                    <div style="text-align: center;">
+                        <img src="${user.photo}" alt="${user.prenom}" 
+                             style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem;"
+                             onerror="this.src='assets/default-avatar.svg'">
+                        <h3>${user.prenom} ${user.nom}</h3>
+                        <div style="color: #6b7280;">
+                            ${user.type === 'conducteur' ? '🚗 Conducteur' : '🧳 Voyageur'}
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Informations personnelles</h4>
+                        <p><strong>Email :</strong> ${user.email}</p>
+                        <p><strong>Téléphone :</strong> ${user.telephone || 'Non renseigné'}</p>
+                        <p><strong>Inscrit le :</strong> ${new Date(user.date_inscription).toLocaleDateString('fr-FR')}</p>
+                        ${user.vehicule ? `<p><strong>Véhicule :</strong> ${user.vehicule}</p>` : ''}
+                        
+                        <h4>Statistiques</h4>
+                        <p><strong>Note moyenne :</strong> ⭐ ${user.note_moyenne}/5</p>
+                        <p><strong>Nombre de trajets :</strong> ${user.nb_trajets}</p>
+                        <p><strong>Status :</strong> 
+                            <span class="status-badge ${user.status === 'active' ? 'status-active' : 
+                                                     user.status === 'suspended' ? 'status-suspended' : 'status-pending'}">
+                                ${user.status === 'active' ? 'Actif' : 
+                                  user.status === 'suspended' ? 'Suspendu' : 'En attente'}
+                            </span>
+                        </p>
+                        ${user.motif_suspension ? `<p><strong>Motif de suspension :</strong> ${user.motif_suspension}</p>` : ''}
+                        
+                        <div style="margin-top: 2rem;">
+                            <button class="btn ${user.status === 'active' ? 'btn-danger' : 'btn-success'}" 
+                                    onclick="${user.status === 'active' ? 'suspendUser' : 'activateUser'}(${user.id}); closeUserModal();">
+                                ${user.status === 'active' ? '🚫 Suspendre' : '✅ Activer'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('user-details-modal').classList.add('active');
+        }
+
+        function closeUserModal() {
+            document.getElementById('user-details-modal').classList.remove('active');
+        }
+
+        function suspendUser(userId) {
+            const user = userManager.users.find(u => u.id === userId);
+            if (user) {
+                const reason = prompt(`Motif de suspension de ${user.prenom} ${user.nom} :`);
+                if (reason) {
+                    user.status = 'suspended';
+                    user.motif_suspension = reason;
+                    userManager.displayUsers();
+                    userManager.updateStats();
+                    alert(`${user.prenom} ${user.nom} a été suspendu.`);
+                }
+            }
+        }
+
+        function activateUser(userId) {
+            const user = userManager.users.find(u => u.id === userId);
+            if (user) {
+                user.status = 'active';
+                delete user.motif_suspension;
+                userManager.displayUsers();
+                userManager.updateStats();
+                alert(`${user.prenom} ${user.nom} a été réactivé.`);
+            }
+        }
+
+        function approveReview(reviewId) {
+            const review = userManager.reviews.find(r => r.id === reviewId);
+            if (review) {
+                review.status = 'approved';
+                userManager.displayPendingReviews();
+                userManager.updateStats();
+                alert(`Avis de ${review.auteur} approuvé.`);
+            }
+        }
+
+        function rejectReview(reviewId) {
+            const review = userManager.reviews.find(r => r.id === reviewId);
+            if (review) {
+                const reason = prompt('Motif de rejet (optionnel) :');
+                review.status = 'rejected';
+                review.motif_rejet = reason;
+                userManager.displayPendingReviews();
+                userManager.updateStats();
+                alert(`Avis de ${review.auteur} rejeté.`);
+            }
+        }
+
+        function viewReviewDetails(reviewId) {
+            const review = userManager.reviews.find(r => r.id === reviewId);
+            if (!review) return;
+
+            alert(`Détails de l'avis :
+
+Auteur: ${review.auteur}
+Destinataire: ${review.cible}
+Trajet: ${review.trajet}
+Date: ${new Date(review.date).toLocaleDateString('fr-FR')}
+Note: ${review.note}/5
+Commentaire: "${review.commentaire}"`);
+        }
+
+        function loadPendingReviews() {
+            userManager.loadReviews().then(() => {
+                userManager.displayPendingReviews();
+                userManager.updateStats();
+            });
+        }
+
+        function closeReviewModal() {
+            document.getElementById('review-modal').classList.remove('active');
+        }
+
+        function handleLogout() {
+            if (typeof auth !== 'undefined' && auth.logout) {
+                auth.logout();
+            }
+            window.location.href = 'login.html';
+        }
+
+        // Vérifier les permissions
+        function checkAdminAccess() {
+            if (typeof auth === 'undefined') {
+                console.log('Auth non disponible, redirection...');
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            if (!auth.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            const user = auth.getCurrentUser();
+            if (!user || !['admin', 'employee'].includes(user.role)) {
+                alert('Accès refusé. Seuls les administrateurs et employés peuvent accéder à cette page.');
+                window.location.href = '../index.html';
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier les permissions
+            if (!checkAdminAccess()) return;
+            
+            // Initialiser le gestionnaire d'utilisateurs
+            userManager = new UserManager();
+            
+            // Fermer les modals en cliquant à l'extérieur
+            document.getElementById('user-details-modal').addEventListener('click', function(e) {
+                if (e.target === this) closeUserModal();
+            });
+            
+            document.getElementById('review-modal').addEventListener('click', function(e) {
+                if (e.target === this) closeReviewModal();
+            });
+        });
+    </script>
+</body>
+</html>

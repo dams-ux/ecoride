@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Voyageur - EcoRide</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/comptecon.css">
+    <link rel="stylesheet" href="../styles/voyageur.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar-placeholder"></nav>
+
+    <div class="container">
+        <div class="dashboard">
+            <!-- En-tête du profil -->
+            <div class="profile-header">
+                <div class="profile-photo">
+                    <img id="profilePic" src="" alt="Photo de profil" class="profile-image">
+                    <div class="photo-overlay">
+                        <input type="file" id="photoUpload" accept="image/*">
+                        <label for="photoUpload" class="photo-btn">📷</label>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h1 id="userName">Chargement...</h1>
+                    <p id="userRole">Voyageur</p>
+                    <div class="rating">
+                        <span class="stars" id="userRating">⭐⭐⭐⭐⭐</span>
+                        <span id="reviewCount">(0 avis)</span>
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="tripCount">0</span>
+                        <span class="stat-label">Voyages</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="economyTotal">0€</span>
+                        <span class="stat-label">Économisé</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="co2Saved">0kg</span>
+                        <span class="stat-label">CO₂ évité</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation des onglets -->
+            <div class="dashboard-nav">
+                <button class="nav-btn active" data-tab="reservations">Mes Réservations</button>
+                <button class="nav-btn" data-tab="recherche">Rechercher</button>
+                <button class="nav-btn" data-tab="historique">Historique</button>
+                <button class="nav-btn" data-tab="avis">Mes Avis</button>
+                <button class="nav-btn" data-tab="profil">Profil</button>
+            </div>
+
+            <!-- Contenu des onglets -->
+            <div id="reservations-tab" class="tab-content active">
+                <div class="section-header">
+                    <h2>Mes Réservations</h2>
+                </div>
+                <div id="reservationsList" class="reservations-list">
+                    <div class="loading">Chargement des réservations...</div>
+                </div>
+            </div>
+
+            <div id="recherche-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Rechercher un Trajet</h2>
+                </div>
+                <form id="searchForm" class="search-form">
+                    <div class="form-group">
+                        <label for="departSearch">Départ</label>
+                        <input type="text" id="departSearch" placeholder="Ville de départ" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="arriveeSearch">Arrivée</label>
+                        <input type="text" id="arriveeSearch" placeholder="Ville d'arrivée" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dateSearch">Date</label>
+                        <input type="date" id="dateSearch" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="passengersSearch">Nombre de places</label>
+                        <select id="passengersSearch">
+                            <option value="1">1 place</option>
+                            <option value="2">2 places</option>
+                            <option value="3">3 places</option>
+                            <option value="4">4 places</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Rechercher</button>
+                </form>
+                <div id="searchResults" class="search-results"></div>
+            </div>
+
+            <div id="historique-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Historique des Voyages</h2>
+                </div>
+                <div id="historiqueList" class="trips-list">
+                    <div class="loading">Chargement de l'historique...</div>
+                </div>
+            </div>
+
+            <div id="avis-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Mes Avis</h2>
+                </div>
+                <div id="avisList" class="reviews-list">
+                    <div class="loading">Chargement des avis...</div>
+                </div>
+            </div>
+
+            <div id="profil-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Modifier le Profil</h2>
+                </div>
+                <form id="profileForm" class="profile-form">
+                    <div class="form-group">
+                        <label for="editName">Nom complet</label>
+                        <input type="text" id="editName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Téléphone</label>
+                        <input type="tel" id="editPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="editBio">Bio</label>
+                        <textarea id="editBio" rows="3" placeholder="Parlez-nous de vous..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPreferences">Préférences de voyage</label>
+                        <div class="preferences">
+                            <label><input type="checkbox" id="prefMusic"> Musique</label>
+                            <label><input type="checkbox" id="prefSmoking"> Fumeur accepté</label>
+                            <label><input type="checkbox" id="prefPets"> Animaux acceptés</label>
+                            <label><input type="checkbox" id="prefTalk"> Bavard</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">Sauvegarder</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer-placeholder"></footer>
+
+    <!-- Scripts -->
+    <script src="../scripts/supabase-client.js"></script>
+    <script src="../scripts/auth-new.js"></script>
+    <script>
+        class VoyageurDashboard {
+            constructor() {
+                this.user = null;
+                this.dbClient = new SupabaseClient();
+                this.authManager = new AuthManager();
+                this.init();
+            }
+
+            async init() {
+                // Charger les composants
+                await this.loadComponents();
+                
+                // Vérifier l'authentification
+                this.user = this.authManager.getCurrentUser();
+                if (!this.user || this.user.role !== 'voyageur') {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Initialiser l'interface
+                this.setupEventListeners();
+                await this.loadUserProfile();
+                await this.loadReservations();
+                
+                // Mettre la date minimale à aujourd'hui
+                document.getElementById('dateSearch').min = new Date().toISOString().split('T')[0];
+            }
+
+            async loadComponents() {
+                // Charger navbar et footer
+                const navbarResponse = await fetch('navbar.html');
+                const footerResponse = await fetch('footer.html');
+                
+                document.getElementById('navbar-placeholder').innerHTML = await navbarResponse.text();
+                document.getElementById('footer-placeholder').innerHTML = await footerResponse.text();
+            }
+
+            setupEventListeners() {
+                // Navigation des onglets
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const tab = e.target.getAttribute('data-tab');
+                        this.switchTab(tab);
+                    });
+                });
+
+                // Formulaire de recherche
+                document.getElementById('searchForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.searchTrips();
+                });
+
+                // Formulaire de profil
+                document.getElementById('profileForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveProfile();
+                });
+
+                // Upload de photo
+                document.getElementById('photoUpload').addEventListener('change', (e) => {
+                    this.handlePhotoUpload(e);
+                });
+            }
+
+            switchTab(tabName) {
+                // Mettre à jour les boutons
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+                // Mettre à jour le contenu
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+
+                // Charger les données si nécessaire
+                if (tabName === 'historique') {
+                    this.loadHistorique();
+                } else if (tabName === 'avis') {
+                    this.loadAvis();
+                }
+            }
+
+            async loadUserProfile() {
+                try {
+                    const userData = await this.dbClient.getUserProfile(this.user.id);
+                    
+                    document.getElementById('userName').textContent = userData.nom_complet;
+                    document.getElementById('profilePic').src = userData.photo_url || '../assets/default-avatar.png';
+                    
+                    // Charger les statistiques
+                    await this.loadStats();
+                    
+                    // Pré-remplir le formulaire de profil
+                    document.getElementById('editName').value = userData.nom_complet;
+                    document.getElementById('editEmail').value = userData.email;
+                    document.getElementById('editPhone').value = userData.telephone || '';
+                    document.getElementById('editBio').value = userData.bio || '';
+                    
+                    // Pré-remplir les préférences
+                    if (userData.preferences) {
+                        const prefs = JSON.parse(userData.preferences);
+                        document.getElementById('prefMusic').checked = prefs.music || false;
+                        document.getElementById('prefSmoking').checked = prefs.smoking || false;
+                        document.getElementById('prefPets').checked = prefs.pets || false;
+                        document.getElementById('prefTalk').checked = prefs.talk || false;
+                    }
+                    
+                } catch (error) {
+                    console.error('Erreur lors du chargement du profil:', error);
+                    this.showError('Erreur lors du chargement du profil');
+                }
+            }
+
+            async loadStats() {
+                try {
+                    const reservations = await this.dbClient.getUserReservations(this.user.id);
+                    const completedTrips = reservations.filter(r => r.statut === 'termine');
+                    
+                    let totalEconomy = 0;
+                    let totalCO2 = 0;
+                    
+                    completedTrips.forEach(reservation => {
+                        totalEconomy += parseFloat(reservation.trajets?.prix_par_place || 0) * reservation.nombre_places;
+                        // Estimation CO2 : ~120g par km par personne évités
+                        const distance = this.estimateDistance(
+                            reservation.trajets?.ville_depart,
+                            reservation.trajets?.ville_arrivee
+                        );
+                        totalCO2 += (distance * 0.12 * reservation.nombre_places);
+                    });
+                    
+                    document.getElementById('tripCount').textContent = completedTrips.length;
+                    document.getElementById('economyTotal').textContent = `${Math.round(totalEconomy)}€`;
+                    document.getElementById('co2Saved').textContent = `${Math.round(totalCO2)}kg`;
+                    
+                } catch (error) {
+                    console.error('Erreur lors du chargement des stats:', error);
+                }
+            }
+
+            async loadReservations() {
+                try {
+                    const reservations = await this.dbClient.getUserReservations(this.user.id);
+                    const activeReservations = reservations.filter(r => 
+                        r.statut === 'confirmee' || r.statut === 'en_attente'
+                    );
+                    
+                    const container = document.getElementById('reservationsList');
+                    
+                    if (activeReservations.length === 0) {
+                        container.innerHTML = '<p class="no-data">Aucune réservation active</p>';
+                        return;
+                    }
+                    
+                    container.innerHTML = activeReservations.map(reservation => `
+                        <div class="reservation-card">
+                            <div class="reservation-header">
+                                <h3>${reservation.trajets?.ville_depart} → ${reservation.trajets?.ville_arrivee}</h3>
+                                <span class="status status-${reservation.statut}">${this.getStatusText(reservation.statut)}</span>
+                            </div>
+                            <div class="reservation-details">
+                                <p><strong>Date:</strong> ${new Date(reservation.trajets?.date_depart).toLocaleDateString('fr-FR')}</p>
+                                <p><strong>Heure:</strong> ${reservation.trajets?.heure_depart}</p>
+                                <p><strong>Places réservées:</strong> ${reservation.nombre_places}</p>
+                                <p><strong>Prix total:</strong> ${(parseFloat(reservation.trajets?.prix_par_place || 0) * reservation.nombre_places).toFixed(2)}€</p>
+                                <p><strong>Conducteur:</strong> ${reservation.trajets?.users?.nom_complet}</p>
+                            </div>
+                            <div class="reservation-actions">
+                                ${reservation.statut === 'en_attente' ? 
+                                    `<button onclick="voyageurDashboard.cancelReservation(${reservation.id})" class="btn-danger">Annuler</button>` :
+                                    `<button onclick="voyageurDashboard.contactDriver(${reservation.trajets?.conducteur_id})" class="btn-secondary">Contacter</button>`
+                                }
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                } catch (error) {
+                    console.error('Erreur lors du chargement des réservations:', error);
+                    document.getElementById('reservationsList').innerHTML = '<p class="error">Erreur lors du chargement</p>';
+                }
+            }
+
+            async searchTrips() {
+                const depart = document.getElementById('departSearch').value.trim();
+                const arrivee = document.getElementById('arriveeSearch').value.trim();
+                const date = document.getElementById('dateSearch').value;
+                const places = parseInt(document.getElementById('passengersSearch').value);
+
+                try {
+                    const results = await this.dbClient.searchTrajets({
+                        ville_depart: depart,
+                        ville_arrivee: arrivee,
+                        date_depart: date,
+                        places_disponibles: places
+                    });
+
+                    const container = document.getElementById('searchResults');
+                    
+                    if (results.length === 0) {
+                        container.innerHTML = '<p class="no-results">Aucun trajet trouvé pour ces critères</p>';
+                        return;
+                    }
+
+                    container.innerHTML = `
+                        <h3>Résultats de recherche (${results.length} trajets)</h3>
+                        <div class="trips-grid">
+                            ${results.map(trajet => `
+                                <div class="trip-card">
+                                    <div class="trip-header">
+                                        <h4>${trajet.ville_depart} → ${trajet.ville_arrivee}</h4>
+                                        <span class="price">${trajet.prix_par_place}€</span>
+                                    </div>
+                                    <div class="trip-details">
+                                        <p><strong>Date:</strong> ${new Date(trajet.date_depart).toLocaleDateString('fr-FR')}</p>
+                                        <p><strong>Heure:</strong> ${trajet.heure_depart}</p>
+                                        <p><strong>Places disponibles:</strong> ${trajet.places_disponibles}</p>
+                                        <p><strong>Conducteur:</strong> ${trajet.users?.nom_complet}</p>
+                                        <div class="driver-rating">⭐ ${trajet.users?.note_moyenne || 'N/A'}</div>
+                                    </div>
+                                    <div class="trip-actions">
+                                        <button onclick="voyageurDashboard.reserveTrip(${trajet.id}, ${places})" 
+                                                class="btn-primary">Réserver ${places} place${places > 1 ? 's' : ''}</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+
+                } catch (error) {
+                    console.error('Erreur lors de la recherche:', error);
+                    document.getElementById('searchResults').innerHTML = '<p class="error">Erreur lors de la recherche</p>';
+                }
+            }
+
+            async reserveTrip(trajetId, nombrePlaces) {
+                try {
+                    await this.dbClient.reserverPlace(trajetId, this.user.id, nombrePlaces);
+                    this.showSuccess('Réservation effectuée avec succès !');
+                    
+                    // Actualiser la liste des réservations
+                    this.switchTab('reservations');
+                    await this.loadReservations();
+                    
+                } catch (error) {
+                    console.error('Erreur lors de la réservation:', error);
+                    this.showError('Erreur lors de la réservation');
+                }
+            }
+
+            async cancelReservation(reservationId) {
+                if (!confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
+                    return;
+                }
+
+                try {
+                    await this.dbClient.cancelReservation(reservationId);
+                    this.showSuccess('Réservation annulée');
+                    await this.loadReservations();
+                    
+                } catch (error) {
+                    console.error('Erreur lors de l\'annulation:', error);
+                    this.showError('Erreur lors de l\'annulation');
+                }
+            }
+
+            async loadHistorique() {
+                try {
+                    const reservations = await this.dbClient.getUserReservations(this.user.id);
+                    const pastTrips = reservations.filter(r => r.statut === 'termine' || r.statut === 'annulee');
+                    
+                    const container = document.getElementById('historiqueList');
+                    
+                    if (pastTrips.length === 0) {
+                        container.innerHTML = '<p class="no-data">Aucun voyage dans l\'historique</p>';
+                        return;
+                    }
+                    
+                    container.innerHTML = pastTrips.map(trip => `
+                        <div class="history-card">
+                            <div class="trip-info">
+                                <h4>${trip.trajets?.ville_depart} → ${trip.trajets?.ville_arrivee}</h4>
+                                <p>Date: ${new Date(trip.trajets?.date_depart).toLocaleDateString('fr-FR')}</p>
+                                <p>Conducteur: ${trip.trajets?.users?.nom_complet}</p>
+                                <span class="status status-${trip.statut}">${this.getStatusText(trip.statut)}</span>
+                            </div>
+                            ${trip.statut === 'termine' && !trip.avis_donne ? 
+                                `<button onclick="voyageurDashboard.leaveReview(${trip.id}, ${trip.trajets?.conducteur_id})" 
+                                         class="btn-secondary">Laisser un avis</button>` : ''
+                            }
+                        </div>
+                    `).join('');
+                    
+                } catch (error) {
+                    console.error('Erreur lors du chargement de l\'historique:', error);
+                    document.getElementById('historiqueList').innerHTML = '<p class="error">Erreur lors du chargement</p>';
+                }
+            }
+
+            async loadAvis() {
+                try {
+                    const avis = await this.dbClient.getUserReviews(this.user.id);
+                    const container = document.getElementById('avisList');
+                    
+                    if (avis.length === 0) {
+                        container.innerHTML = '<p class="no-data">Aucun avis donné</p>';
+                        return;
+                    }
+                    
+                    container.innerHTML = avis.map(review => `
+                        <div class="review-card">
+                            <div class="review-header">
+                                <h4>Avis pour ${review.destinataire?.nom_complet}</h4>
+                                <div class="rating">${'⭐'.repeat(review.note)}</div>
+                            </div>
+                            <p class="review-comment">"${review.commentaire}"</p>
+                            <small>Publié le ${new Date(review.date_creation).toLocaleDateString('fr-FR')}</small>
+                        </div>
+                    `).join('');
+                    
+                } catch (error) {
+                    console.error('Erreur lors du chargement des avis:', error);
+                    document.getElementById('avisList').innerHTML = '<p class="error">Erreur lors du chargement</p>';
+                }
+            }
+
+            async leaveReview(reservationId, conducteurId) {
+                const note = prompt('Note sur 5 (1-5):');
+                const commentaire = prompt('Commentaire (optionnel):');
+                
+                if (!note || note < 1 || note > 5) {
+                    this.showError('Note invalide');
+                    return;
+                }
+
+                try {
+                    await this.dbClient.createReview(this.user.id, conducteurId, reservationId, parseInt(note), commentaire || '');
+                    this.showSuccess('Avis publié !');
+                    await this.loadHistorique();
+                    
+                } catch (error) {
+                    console.error('Erreur lors de la publication de l\'avis:', error);
+                    this.showError('Erreur lors de la publication de l\'avis');
+                }
+            }
+
+            async saveProfile() {
+                const formData = {
+                    nom_complet: document.getElementById('editName').value,
+                    telephone: document.getElementById('editPhone').value,
+                    bio: document.getElementById('editBio').value,
+                    preferences: JSON.stringify({
+                        music: document.getElementById('prefMusic').checked,
+                        smoking: document.getElementById('prefSmoking').checked,
+                        pets: document.getElementById('prefPets').checked,
+                        talk: document.getElementById('prefTalk').checked
+                    })
+                };
+
+                try {
+                    await this.dbClient.updateUserProfile(this.user.id, formData);
+                    this.showSuccess('Profil mis à jour !');
+                    await this.loadUserProfile();
+                    
+                } catch (error) {
+                    console.error('Erreur lors de la mise à jour:', error);
+                    this.showError('Erreur lors de la mise à jour du profil');
+                }
+            }
+
+            async handlePhotoUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                try {
+                    const photoUrl = await this.dbClient.uploadUserPhoto(this.user.id, file);
+                    document.getElementById('profilePic').src = photoUrl;
+                    this.showSuccess('Photo mise à jour !');
+                    
+                } catch (error) {
+                    console.error('Erreur lors de l\'upload:', error);
+                    this.showError('Erreur lors de l\'upload de la photo');
+                }
+            }
+
+            contactDriver(conducteurId) {
+                // Rediriger vers une page de messagerie ou ouvrir un modal
+                alert('Fonctionnalité de messagerie à implémenter');
+            }
+
+            getStatusText(status) {
+                const statusMap = {
+                    'en_attente': 'En attente',
+                    'confirmee': 'Confirmée',
+                    'termine': 'Terminé',
+                    'annulee': 'Annulée'
+                };
+                return statusMap[status] || status;
+            }
+
+            estimateDistance(depart, arrivee) {
+                // Estimation simple basée sur une base de données fictive
+                // En production, utiliser une API de géolocalisation
+                const distances = {
+                    'Paris-Lyon': 465,
+                    'Lyon-Marseille': 315,
+                    'Paris-Marseille': 775,
+                    'Paris-Bordeaux': 580,
+                    'Lyon-Toulouse': 540
+                };
+                
+                const key1 = `${depart}-${arrivee}`;
+                const key2 = `${arrivee}-${depart}`;
+                
+                return distances[key1] || distances[key2] || 100; // Distance par défaut
+            }
+
+            showSuccess(message) {
+                // Afficher un message de succès
+                const toast = document.createElement('div');
+                toast.className = 'toast toast-success';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+
+            showError(message) {
+                // Afficher un message d'erreur
+                const toast = document.createElement('div');
+                toast.className = 'toast toast-error';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        }
+
+        // Initialiser le dashboard
+        const voyageurDashboard = new VoyageurDashboard();
+    </script>
+
+    <style>
+        .reservations-list, .search-results, .trips-list, .reviews-list {
+            margin-top: 20px;
+        }
+
+        .reservation-card, .trip-card, .history-card, .review-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .reservation-header, .trip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .status-confirmee { background: #d4edda; color: #155724; }
+        .status-en_attente { background: #fff3cd; color: #856404; }
+        .status-termine { background: #d1ecf1; color: #0c5460; }
+        .status-annulee { background: #f8d7da; color: #721c24; }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .trips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .price {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .driver-rating {
+            margin-top: 10px;
+            color: #ffa500;
+        }
+
+        .no-data, .no-results, .error {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast-success {
+            background: #28a745;
+        }
+
+        .toast-error {
+            background: #dc3545;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .preferences {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .preferences label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: normal;
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-stats {
+                margin-top: 20px;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .trips-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+</html>

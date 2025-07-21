@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Employés - EcoRide Admin</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+    <link rel="stylesheet" href="../styles/admin.css">
+</head>
+<body>
+    <!-- Navbar Admin -->
+    <nav class="navbar-ecoride">
+        <div class="navbar-left">
+            <img src="assets/image voiture.png" alt="EcoRide" class="navbar-logo">
+            <span style="color: white; font-weight: bold; margin-left: 0.5rem;">ADMIN</span>
+        </div>
+        <div class="navbar-center">
+            <a href="../index.html" class="navbar-btn">🏠 Accueil</a>
+            <a href="admin-dashboard.html" class="navbar-btn">📊 Dashboard</a>
+            <a href="admin-employees.html" class="navbar-btn active">👥 Employés</a>
+            <a href="admin-users.html" class="navbar-btn">👤 Utilisateurs</a>
+        </div>
+        <div class="navbar-right">
+            <div class="dropdown-user">
+                <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                    <img src="assets/Icon.png" alt="Admin" style="height:32px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle;">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content">
+                    <a href="admin-profile.html">Mon profil</a>
+                    <a href="#" onclick="handleLogout()">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1 class="admin-title">Gestion des Employés</h1>
+            <p class="admin-subtitle">Créer et gérer les comptes employés</p>
+        </div>
+
+        <!-- Section création employé -->
+        <div class="management-section">
+            <div class="section-header">
+                <h2 class="section-title">Créer un nouvel employé</h2>
+                <button class="btn btn-primary" onclick="toggleEmployeeForm()">
+                    ➕ Ajouter un employé
+                </button>
+            </div>
+            
+            <div id="employee-form" style="display: none; padding: 1.5rem;">
+                <form id="create-employee-form" onsubmit="createEmployee(event)">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Prénom *</label>
+                            <input type="text" class="form-input" name="prenom" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nom *</label>
+                            <input type="text" class="form-input" name="nom" required>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-input" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Téléphone</label>
+                            <input type="tel" class="form-input" name="telephone">
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Mot de passe temporaire *</label>
+                            <input type="password" class="form-input" name="password" id="temp-password" required>
+                            <button type="button" onclick="generatePassword()" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                                🎲 Générer
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Poste</label>
+                            <select class="form-input" name="poste">
+                                <option value="support">Support Client</option>
+                                <option value="moderateur">Modérateur</option>
+                                <option value="gestionnaire">Gestionnaire</option>
+                                <option value="analyste">Analyste</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Permissions</label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" name="permissions" value="users">
+                                <span>Gérer les utilisateurs</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" name="permissions" value="rides">
+                                <span>Modérer les trajets</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" name="permissions" value="reviews">
+                                <span>Valider les avis</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" name="permissions" value="support">
+                                <span>Support client</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                        <button type="button" class="btn" style="background: #6b7280; color: white;" onclick="toggleEmployeeForm()">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            ✅ Créer l'employé
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des employés -->
+        <div class="management-section">
+            <div class="section-header">
+                <h2 class="section-title">Employés existants</h2>
+                <div class="section-actions">
+                    <input type="text" id="search-employees" placeholder="🔍 Rechercher..." 
+                           style="padding: 0.5rem; border: 1px solid white; border-radius: 6px; margin-right: 1rem;"
+                           onkeyup="searchEmployees()">
+                </div>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nom complet</th>
+                            <th>Email</th>
+                            <th>Poste</th>
+                            <th>Status</th>
+                            <th>Dernière connexion</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employees-table">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem;">
+                                <div class="loading">Chargement des employés...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation -->
+    <div class="modal" id="confirm-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmation</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <p id="modal-message">Êtes-vous sûr de vouloir effectuer cette action ?</p>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                <button class="btn" style="background: #6b7280; color: white;" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-danger" id="confirm-btn" onclick="confirmAction()">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../scripts/supabase-client.js"></script>
+    <script src="../scripts/auth-new.js"></script>
+    <script>
+        // 👥 Gestion des employés
+        class EmployeeManager {
+            constructor() {
+                this.employees = [];
+                this.currentAction = null;
+                this.init();
+            }
+
+            init() {
+                this.loadEmployees();
+            }
+
+            // Charger la liste des employés
+            async loadEmployees() {
+                try {
+                    // Simuler des données d'employés
+                    this.employees = [
+                        {
+                            id: 1,
+                            prenom: 'Marie',
+                            nom: 'Dubois',
+                            email: 'marie.dubois@ecoride.fr',
+                            poste: 'Support Client',
+                            status: 'active',
+                            permissions: ['users', 'support'],
+                            derniere_connexion: new Date(Date.now() - 3600000).toLocaleString('fr-FR'),
+                            date_creation: new Date(Date.now() - 86400000 * 30).toLocaleDateString('fr-FR')
+                        },
+                        {
+                            id: 2,
+                            prenom: 'Paul',
+                            nom: 'Martin',
+                            email: 'paul.martin@ecoride.fr',
+                            poste: 'Modérateur',
+                            status: 'active',
+                            permissions: ['rides', 'reviews'],
+                            derniere_connexion: new Date(Date.now() - 7200000).toLocaleString('fr-FR'),
+                            date_creation: new Date(Date.now() - 86400000 * 45).toLocaleDateString('fr-FR')
+                        },
+                        {
+                            id: 3,
+                            prenom: 'Sophie',
+                            nom: 'Leroy',
+                            email: 'sophie.leroy@ecoride.fr',
+                            poste: 'Gestionnaire',
+                            status: 'suspended',
+                            permissions: ['users', 'rides', 'reviews'],
+                            derniere_connexion: new Date(Date.now() - 86400000 * 7).toLocaleString('fr-FR'),
+                            date_creation: new Date(Date.now() - 86400000 * 60).toLocaleDateString('fr-FR')
+                        }
+                    ];
+                    
+                    this.displayEmployees();
+                } catch (error) {
+                    console.error('Erreur lors du chargement des employés:', error);
+                    document.getElementById('employees-table').innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #ef4444;">
+                                Erreur lors du chargement des employés
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+
+            // Afficher la liste des employés
+            displayEmployees(employeesToShow = null) {
+                const employees = employeesToShow || this.employees;
+                const tbody = document.getElementById('employees-table');
+                
+                if (employees.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem;">
+                                Aucun employé trouvé
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = employees.map(employee => `
+                    <tr>
+                        <td>${employee.prenom} ${employee.nom}</td>
+                        <td>${employee.email}</td>
+                        <td>${employee.poste}</td>
+                        <td>
+                            <span class="status-badge ${employee.status === 'active' ? 'status-active' : 
+                                                     employee.status === 'suspended' ? 'status-suspended' : 'status-pending'}">
+                                ${employee.status === 'active' ? 'Actif' : 
+                                  employee.status === 'suspended' ? 'Suspendu' : 'En attente'}
+                            </span>
+                        </td>
+                        <td>${employee.derniere_connexion}</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-primary" onclick="editEmployee(${employee.id})" 
+                                        style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                    ✏️ Modifier
+                                </button>
+                                <button class="btn ${employee.status === 'active' ? 'btn-danger' : 'btn-success'}" 
+                                        onclick="${employee.status === 'active' ? 'suspendEmployee' : 'activateEmployee'}(${employee.id})"
+                                        style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                    ${employee.status === 'active' ? '🚫 Suspendre' : '✅ Activer'}
+                                </button>
+                                <button class="btn btn-danger" onclick="deleteEmployee(${employee.id})" 
+                                        style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                                    🗑️ Supprimer
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Créer un nouvel employé
+            async createEmployee(formData) {
+                try {
+                    const newEmployee = {
+                        id: Date.now(), // Simuler un ID unique
+                        prenom: formData.prenom,
+                        nom: formData.nom,
+                        email: formData.email,
+                        telephone: formData.telephone,
+                        poste: formData.poste,
+                        permissions: formData.permissions,
+                        status: 'active',
+                        derniere_connexion: 'Jamais connecté',
+                        date_creation: new Date().toLocaleDateString('fr-FR')
+                    };
+
+                    // Ajouter à la liste
+                    this.employees.push(newEmployee);
+                    this.displayEmployees();
+                    
+                    // Afficher un message de succès
+                    alert(`Employé créé avec succès !
+                    
+Nom: ${newEmployee.prenom} ${newEmployee.nom}
+Email: ${newEmployee.email}
+Mot de passe temporaire: ${formData.password}
+
+L'employé devra changer son mot de passe lors de sa première connexion.`);
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Erreur lors de la création de l\'employé:', error);
+                    alert('Erreur lors de la création de l\'employé. Veuillez réessayer.');
+                    return false;
+                }
+            }
+
+            // Rechercher des employés
+            searchEmployees(query) {
+                const filtered = this.employees.filter(employee => {
+                    const fullName = `${employee.prenom} ${employee.nom}`.toLowerCase();
+                    const email = employee.email.toLowerCase();
+                    const poste = employee.poste.toLowerCase();
+                    const searchTerm = query.toLowerCase();
+                    
+                    return fullName.includes(searchTerm) || 
+                           email.includes(searchTerm) || 
+                           poste.includes(searchTerm);
+                });
+                
+                this.displayEmployees(filtered);
+            }
+        }
+
+        // Instance globale du gestionnaire d'employés
+        let employeeManager;
+
+        // Fonctions d'interface
+        function toggleEmployeeForm() {
+            const form = document.getElementById('employee-form');
+            const isVisible = form.style.display !== 'none';
+            form.style.display = isVisible ? 'none' : 'block';
+            
+            if (!isVisible) {
+                document.getElementById('create-employee-form').reset();
+            }
+        }
+
+        function generatePassword() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+            let password = '';
+            for (let i = 0; i < 10; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('temp-password').value = password;
+        }
+
+        function createEmployee(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Récupérer les permissions cochées
+            const permissionsCheckboxes = document.querySelectorAll('input[name="permissions"]:checked');
+            data.permissions = Array.from(permissionsCheckboxes).map(cb => cb.value);
+            
+            if (employeeManager.createEmployee(data)) {
+                toggleEmployeeForm();
+            }
+        }
+
+        function searchEmployees() {
+            const query = document.getElementById('search-employees').value;
+            employeeManager.searchEmployees(query);
+        }
+
+        function editEmployee(id) {
+            const employee = employeeManager.employees.find(e => e.id === id);
+            if (employee) {
+                alert(`Édition de l'employé: ${employee.prenom} ${employee.nom}
+                
+Cette fonctionnalité sera disponible dans une prochaine version.`);
+            }
+        }
+
+        function suspendEmployee(id) {
+            const employee = employeeManager.employees.find(e => e.id === id);
+            if (employee) {
+                showConfirmModal(`Suspendre l'employé ${employee.prenom} ${employee.nom} ?`, () => {
+                    employee.status = 'suspended';
+                    employeeManager.displayEmployees();
+                    alert(`${employee.prenom} ${employee.nom} a été suspendu.`);
+                });
+            }
+        }
+
+        function activateEmployee(id) {
+            const employee = employeeManager.employees.find(e => e.id === id);
+            if (employee) {
+                showConfirmModal(`Réactiver l'employé ${employee.prenom} ${employee.nom} ?`, () => {
+                    employee.status = 'active';
+                    employeeManager.displayEmployees();
+                    alert(`${employee.prenom} ${employee.nom} a été réactivé.`);
+                });
+            }
+        }
+
+        function deleteEmployee(id) {
+            const employee = employeeManager.employees.find(e => e.id === id);
+            if (employee) {
+                showConfirmModal(`Supprimer définitivement l'employé ${employee.prenom} ${employee.nom} ?
+                
+⚠️ Cette action est irréversible !`, () => {
+                    const index = employeeManager.employees.findIndex(e => e.id === id);
+                    if (index > -1) {
+                        employeeManager.employees.splice(index, 1);
+                        employeeManager.displayEmployees();
+                        alert(`${employee.prenom} ${employee.nom} a été supprimé.`);
+                    }
+                });
+            }
+        }
+
+        // Gestion des modals
+        function showConfirmModal(message, onConfirm) {
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('confirm-modal').classList.add('active');
+            
+            // Stocker l'action à confirmer
+            employeeManager.currentAction = onConfirm;
+        }
+
+        function closeModal() {
+            document.getElementById('confirm-modal').classList.remove('active');
+            employeeManager.currentAction = null;
+        }
+
+        function confirmAction() {
+            if (employeeManager.currentAction) {
+                employeeManager.currentAction();
+            }
+            closeModal();
+        }
+
+        function handleLogout() {
+            if (typeof auth !== 'undefined' && auth.logout) {
+                auth.logout();
+            }
+            window.location.href = 'login.html';
+        }
+
+        // Vérifier les permissions admin
+        function checkAdminAccess() {
+            if (typeof auth === 'undefined') {
+                console.log('Auth non disponible, redirection...');
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            if (!auth.isLoggedIn()) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            const user = auth.getCurrentUser();
+            if (!user || user.role !== 'admin') {
+                alert('Accès refusé. Seuls les administrateurs peuvent accéder à cette page.');
+                window.location.href = '../index.html';
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier les permissions
+            if (!checkAdminAccess()) return;
+            
+            // Initialiser le gestionnaire d'employés
+            employeeManager = new EmployeeManager();
+            
+            // Fermer les modals en cliquant à l'extérieur
+            document.getElementById('confirm-modal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        });
+    </script>
+</body>
+</html>

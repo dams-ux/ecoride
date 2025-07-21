@@ -9,7 +9,8 @@ async function getTrajetDuration(depart, arrivee, callback) {
             const resp = await fetch(`https://api.openrouteservice.org/geocode/search?api_key=${API_KEY}&text=${encodeURIComponent(adresse)}`);
             const data = await resp.json();
             return data.features?.[0]?.geometry.coordinates ?? null;
-        } catch (e) {
+        } catch (error) {
+            console.error('Erreur géocodage:', error);
             return null;
         }
     };
@@ -43,10 +44,12 @@ async function getTrajetDuration(depart, arrivee, callback) {
         else if (m > 0) dureeTxt = `${m}min`;
         else dureeTxt = "0min";
         callback(dureeTxt);
-    } catch (e) {
+    } catch (error) {
+        console.error('Erreur API trajet:', error);
         callback("Erreur API");
     }
 }
+
 // ----------- RECHERCHE ACCUEIL -----------
 document.addEventListener('DOMContentLoaded', function() {
     const btn = document.querySelector('button');
