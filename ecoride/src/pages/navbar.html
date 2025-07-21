@@ -1,45 +1,40 @@
 <!DOCTYPE html>
-<html lang="fr            <div class="dropdown-content">
-                <a href="login.html">Connexion <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;"><polyline points="9 6 15 12 9 18" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                <a href="signup.html">Inscription <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;"><polyline points="9 6 15 12 9 18" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-            </div>
-
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="../styles/main.css">
-<script src="../scripts/fonction.js"></script>
+    <title>Navigation - EcoRide</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+</head>
+<body>
+    <nav class="navbar-ecoride">
+        <div class="navbar-left">
+            <img src="assets/image voiture.png" alt="image voiture" class="navbar-logo">
+        </div>
+        <div class="navbar-center">
+            <a href="../../index.html" class="navbar-btn">Accueil</a>
+            <a href="covoiturage.html" class="navbar-btn">Covoiturage</a>
+            <a href="#" class="navbar-btn">Contact</a>
+        </div>
+        <div class="navbar-right" style="position:relative;">
+            <div class="dropdown-user">
+                <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                    <img src="assets/Icon.png" alt="Utilisateur" style="height:32px;">
+                    <!-- Flèche SVG fine -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle; margin-left:3px;">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content">
+                    <a href="login.html">Connexion <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;"><polyline points="9 6 15 12 9 18" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                    <a href="signup.html">Inscription <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;"><polyline points="9 6 15 12 9 18" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                </div>
+            </div>        
+            <img src="assets/image energie.png" alt="Energie" class="navbar-energie">
+        </div>
+    </nav>
 
-<link rel="stylesheet" href="../styles/navfooter.css">
-<nav class="navbar-ecoride">
-    <div class="navbar-left">
-        <img src="assets/image voiture.png" alt="image voiture" class="navbar-logo">
-    </div>
-    <div class="navbar-center">
-        <a href="../../index.html" class="navbar-btn">Accueil</a>
-        <a href="covoiturage.html" class="navbar-btn">Covoiturage</a>
-        <a href="#" class="navbar-btn">Contact</a>
-    </div>
-    <div class="navbar-right" style="position:relative;">
-        <div class="dropdown-user">
-            <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
-                <img src="assets/Icon.png" alt="Utilisateur" style="height:32px;">
-                <!-- Flèche SVG fine -->
-                <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle; margin-left:3px;">
-                    <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </span>
-            <div class="dropdown-content">
-                <a href="../pages/login.php">Connexion <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;"><polyline points="9 6 15 12 9 18" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                <a href="../pages/signup.php">Inscription <svg width="16" height="16" viewBox="0 0 24 24" style="vertical-align:middle;"><polyline points="9 6 15 12 9 18" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-            </div>
-        </div>        
-        <img src="assets/image energie.png" alt="Energie" class="navbar-energie">
-    </div>
-</nav>
-
-
-
-
-
+    <script src="../scripts/fonction.js"></script>
+</body>
 </html>
