@@ -31,7 +31,7 @@
                 </span>
                 <div class="dropdown-content">
                     <a href="admin-profile.html">Mon profil</a>
-                    <a href="#" onclick="handleLogout()">Déconnexion</a>
+                    <button onclick="handleLogout()" style="background: none; border: none; color: inherit; cursor: pointer; text-align: left; width: 100%;">Déconnexion</button>
                 </div>
             </div>
         </div>
@@ -278,7 +278,7 @@
                 // Calculer les angles pour le graphique circulaire
                 const completedAngle = (this.ridesData.completed / total) * 360;
                 const pendingAngle = (this.ridesData.pending / total) * 360;
-                const cancelledAngle = (this.ridesData.cancelled / total) * 360;
+                // Note: angle annulé calculé automatiquement par CSS
                 
                 // Mettre à jour le CSS du graphique circulaire
                 const pieChart = document.getElementById('pie-chart');
@@ -296,7 +296,7 @@
             updateStats() {
                 const todayRevenue = this.revenueData[this.revenueData.length - 1]?.revenue || 0;
                 const todayRides = this.revenueData[this.revenueData.length - 1]?.rides || 0;
-                const totalRevenue = this.revenueData.reduce((sum, day) => sum + day.revenue, 0);
+                // Revenu total calculé mais non affiché dans cette version
                 
                 document.getElementById('daily-revenue').textContent = `${todayRevenue}€`;
                 document.getElementById('daily-rides').textContent = todayRides;
