@@ -29,7 +29,7 @@
                 </span>
                 <div class="dropdown-content">
                     <a href="comptecon.html">Mon compte</a>
-                    <a href="#" onclick="handleLogout()">Déconnexion</a>
+                    <button onclick="handleLogout()" style="background: none; border: none; cursor: pointer; text-align: left; width: 100%;">Déconnexion</button>
                 </div>
             </div>
             <img src="assets/image energie.png" alt="Energie" class="navbar-energie">
@@ -262,13 +262,13 @@
         // Gestion des onglets
         function openTab(evt, tabName) {
             const tabcontent = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].classList.remove("active");
+            for (const element of tabcontent) {
+                element.classList.remove("active");
             }
             
             const tablinks = document.getElementsByClassName("tab-button");
-            for (let i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
+            for (const element of tablinks) {
+                element.classList.remove("active");
             }
             
             document.getElementById(tabName).classList.add("active");
