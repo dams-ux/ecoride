@@ -57,7 +57,11 @@
         <div style="margin-top: 30px; padding: 10px; background: #f0f0f0; border-radius: 5px; font-size: 12px;">
             <strong>Comptes de test :</strong><br>
             Conducteur : jean.dupont@test.com / password123<br>
-            Voyageur : marie.martin@test.com / password123
+            Voyageur : marie.martin@test.com / password123<br><br>
+            <button type="button" onclick="autoLogin('conducteur')" style="margin-right: 10px;">Connexion auto conducteur</button>
+            <button type="button" onclick="autoLogin('voyageur')">Connexion auto voyageur</button><br><br>
+            <button type="button" onclick="debugAuth()">Debug Auth</button>
+            <button type="button" onclick="clearData()">Effacer données</button>
         </div>
     </div>
 
@@ -96,6 +100,33 @@
                 window.location.href = redirectUrl;
             }
         });
+
+        // Fonctions de test et debug
+        function autoLogin(role) {
+            const email = role === 'conducteur' ? 'jean.dupont@test.com' : 'marie.martin@test.com';
+            const result = auth.login(email, 'password123');
+            
+            console.log('Résultat connexion auto:', result);
+            
+            if (result.success) {
+                window.location.href = result.redirectUrl;
+            } else {
+                alert('Erreur connexion auto: ' + result.message);
+            }
+        }
+
+        function debugAuth() {
+            auth.debugShowData();
+            alert('Consultez la console pour voir les données d\'authentification');
+        }
+
+        function clearData() {
+            if (confirm('Effacer toutes les données ? (utilisateurs, connexions, véhicules, trajets)')) {
+                localStorage.clear();
+                alert('Données effacées. Rechargez la page.');
+                location.reload();
+            }
+        }
     </script>
 </body>
 </html>

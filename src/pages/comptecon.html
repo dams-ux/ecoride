@@ -189,8 +189,24 @@
     <script src="../scripts/auth.js"></script>
     <script>
         // Vérifier si l'utilisateur est connecté et est un conducteur
-        if (!auth.isLoggedIn() || auth.getCurrentUser().role !== 'conducteur') {
+        console.log('=== VERIFICATION COMPTE CONDUCTEUR ===');
+        console.log('Auth system:', auth);
+        console.log('User logged in:', auth.isLoggedIn());
+        console.log('Current user:', auth.getCurrentUser());
+        
+        if (!auth.isLoggedIn()) {
+            console.log('Utilisateur non connecté - redirection vers login');
+            alert('Vous devez être connecté pour accéder à cette page.');
             window.location.href = 'login.html';
+        } else {
+            const currentUser = auth.getCurrentUser();
+            if (currentUser.role !== 'conducteur') {
+                console.log('Utilisateur connecté mais pas conducteur:', currentUser.role);
+                alert('Cette page est réservée aux conducteurs.');
+                window.location.href = currentUser.role === 'voyageur' ? 'comptevoyageur.html' : 'login.html';
+            } else {
+                console.log('Conducteur connecté avec succès:', currentUser);
+            }
         }
 
         const currentUser = auth.getCurrentUser();

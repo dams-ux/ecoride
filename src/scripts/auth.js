@@ -60,14 +60,22 @@ class AuthSystem {
 
     // Connexion
     login(email, password) {
+        console.log(`Tentative de connexion pour: ${email}`);
         const user = this.findUserByEmail(email);
         
         if (!user) {
+            console.log('Utilisateur non trouvé');
             return { success: false, message: 'Email ou mot de passe incorrect.' };
         }
 
+        console.log('Utilisateur trouvé:', user);
+
         // Vérifier le mot de passe (décodage basique)
-        if (atob(user.data.password) !== password) {
+        const storedPassword = atob(user.data.password);
+        console.log('Mot de passe stocké:', storedPassword, 'Mot de passe saisi:', password);
+        
+        if (storedPassword !== password) {
+            console.log('Mot de passe incorrect');
             return { success: false, message: 'Email ou mot de passe incorrect.' };
         }
 
@@ -77,6 +85,8 @@ class AuthSystem {
             role: user.role
         };
         this.saveData();
+
+        console.log('Connexion réussie. Utilisateur connecté:', this.currentUser);
 
         return { 
             success: true, 
@@ -145,6 +155,7 @@ class AuthSystem {
     // Initialiser quelques utilisateurs de test (optionnel)
     initTestUsers() {
         if (this.users.conducteurs.length === 0 && this.users.voyageurs.length === 0) {
+            console.log('Initialisation des utilisateurs de test...');
             this.users.conducteurs.push({
                 id: 1,
                 nom: 'Dupont',
@@ -166,7 +177,16 @@ class AuthSystem {
             });
 
             this.saveData();
+            console.log('Utilisateurs de test créés:', this.users);
         }
+    }
+
+    // Fonction de debug pour afficher les données
+    debugShowData() {
+        console.log('=== DEBUG AUTH SYSTEM ===');
+        console.log('Utilisateurs:', this.users);
+        console.log('Utilisateur connecté:', this.currentUser);
+        console.log('========================');
     }
 }
 
@@ -174,7 +194,7 @@ class AuthSystem {
 const auth = new AuthSystem();
 
 // Initialiser quelques utilisateurs de test (en développement)
-// auth.initTestUsers();
+auth.initTestUsers();
 
 // Fonction pour mettre à jour l'interface utilisateur selon l'état de connexion
 function updateAuthUI() {
