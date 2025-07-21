@@ -108,17 +108,25 @@
                 const userRole = currentUser.role;
                 const accountPage = userRole === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html';
                 
+                // Utilisateur connecté : afficher seulement Mon compte et Déconnexion
                 dropdownContent.innerHTML = `
-                    <a href="src/pages/${accountPage}">Mon compte</a>
-                    <a href="#" onclick="handleLogout()">Déconnexion</a>
+                    <a href="src/pages/${accountPage}">Mon compte (${currentUser.prenom})</a>
+                    <button onclick="handleLogout()" style="background: #f44336; color: white; border: none; cursor: pointer; text-align: left; width: 100%; padding: 8px 12px; font-size: 14px; border-radius: 4px;">🚪 Déconnexion</button>
+                `;
+            } else {
+                // Utilisateur non connecté : afficher Connexion et Inscription
+                dropdownContent.innerHTML = `
+                    <a href="src/pages/login.html">Connexion</a>
+                    <a href="src/pages/signup.html">Inscription</a>
                 `;
             }
         }
 
         // Fonction de déconnexion
         function handleLogout() {
-            if (auth) {
+            if (auth && confirm('Voulez-vous vraiment vous déconnecter ?')) {
                 auth.logout();
+                alert('Déconnexion réussie !');
                 updateNavbarUI();
                 window.location.reload();
             }
