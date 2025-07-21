@@ -255,8 +255,14 @@
 
             container.innerHTML = voyageurDataManager.reservations.map(reservation => {
                 const departDate = new Date(reservation.date_depart).toLocaleString('fr-FR');
-                const statutClass = reservation.statut === 'confirmée' ? 'statut-confirmee' : 
-                                  reservation.statut === 'en_attente' ? 'statut-attente' : 'statut-annulee';
+                let statutClass;
+                if (reservation.statut === 'confirmée') {
+                    statutClass = 'statut-confirmee';
+                } else if (reservation.statut === 'en_attente') {
+                    statutClass = 'statut-attente';
+                } else {
+                    statutClass = 'statut-annulee';
+                }
                 
                 return `
                     <div class="reservation-card">
