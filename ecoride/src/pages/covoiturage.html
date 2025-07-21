@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECORIDE - La route verte</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+    <link rel="stylesheet" href="../styles/covoiturage.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar-ecoride">
+        <div class="navbar-left">
+            <img src="assets/image voiture.png" alt="image voiture" class="navbar-logo">
+        </div>
+        <div class="navbar-center">
+            <a href="../../index.html" class="navbar-btn">Accueil</a>
+            <a href="covoiturage.html" class="navbar-btn">Covoiturage</a>
+            <a href="#" class="navbar-btn">Contact</a>
+        </div>
+        <div class="navbar-right" style="position:relative;">
+            <div class="dropdown-user">
+                <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                    <img src="assets/Icon.png" alt="Utilisateur" style="height:32px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle; margin-left:3px;">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content" id="navbar-dropdown">
+                    <a href="login.html">Connexion</a>
+                    <a href="signup.html">Inscription</a>
+                </div>
+            </div>
+            <img src="assets/image energie.png" alt="Energie" class="navbar-energie">
+        </div>
+    </nav>
+
+    <!-- Bandeau principal -->
+    <header style="background:#f2efc6;padding:0;margin:0;">
+        <img src="assets/fond2.png" alt="Logo Ecoride" style="width:100%;display:block;">
+    </header>
+
+    <div class="barre-recherche">
+        <label for="depart" style="position:absolute;left:-9999px;">Départ</label>
+        <input id="depart" type="text" placeholder="Départ">
+
+        <label for="destination" style="position:absolute;left:-9999px;">Destination</label>
+        <input id="destination" type="text" placeholder="Destination">
+
+        <label for="passagers" style="position:absolute;left:-9999px;">Nombre de passagers</label>
+        <select id="passagers" title="Nombre de passagers">
+            <option>Passagers</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3+</option>
+        </select>
+
+        <label for="date" style="position:absolute;left:-9999px;">Date du trajet</label>
+        <input id="date" type="date" title="Date du trajet">
+
+        <button onclick="searchRides()">🔍</button>
+    </div>
+
+    <div class="main-container">
+        <section class="rides-list" id="rides-list">
+            <h2>Trajets disponibles</h2>
+            <div id="rides-container">
+                <!-- Les trajets seront chargés ici par JavaScript -->
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer-ecoride">
+        <p>Mentions Légales</p>
+        <p>ecoridenature@hotmail.fr</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../scripts/auth.js"></script>
+    <script src="../scripts/fonction.js"></script>
+    <script src="../scripts/trajet.js"></script>
+    <script>
+        // Données d'exemple pour les trajets (remplace la base de données)
+        const sampleRides = [
+            {
+                id: 1,
+                depart: 'Paris',
+                arrivee: 'Lyon',
+                date_depart: '2025-07-22 08:00:00',
+                date_arriver: '2025-07-22 12:30:00',
+                tarif: 45,
+                nb_places: 3,
+                conducteur_nom: 'Dupont',
+                conducteur_prenom: 'Jean',
+                conducteur_photo: '../uploads/687cb678de825_photo utilisateur 2.png',
+                note_moyenne: 4.5,
+                marque: 'Tesla',
+                modele: 'Model 3',
+                energie: 'electrique'
+            },
+            {
+                id: 2,
+                depart: 'Marseille',
+                arrivee: 'Nice',
+                date_depart: '2025-07-23 14:00:00',
+                date_arriver: '2025-07-23 16:30:00',
+                tarif: 25,
+                nb_places: 2,
+                conducteur_nom: 'Martin',
+                conducteur_prenom: 'Sophie',
+                conducteur_photo: '../uploads/687ce7dbe0399_photo utilisateur.png',
+                note_moyenne: 4.2,
+                marque: 'Peugeot',
+                modele: '308',
+                energie: 'essence'
+            },
+            {
+                id: 3,
+                depart: 'Toulouse',
+                arrivee: 'Bordeaux',
+                date_depart: '2025-07-24 09:30:00',
+                date_arriver: '2025-07-24 12:00:00',
+                tarif: 35,
+                nb_places: 1,
+                conducteur_nom: 'Garcia',
+                conducteur_prenom: 'Maria',
+                conducteur_photo: '../uploads/687ce7e67b1be_photo utilisateur.png',
+                note_moyenne: 4.8,
+                marque: 'BMW',
+                modele: 'i3',
+                energie: 'electrique'
+            },
+            {
+                id: 4,
+                depart: 'Lille',
+                arrivee: 'Strasbourg',
+                date_depart: '2025-07-25 07:00:00',
+                date_arriver: '2025-07-25 12:30:00',
+                tarif: 55,
+                nb_places: 4,
+                conducteur_nom: 'Bernard',
+                conducteur_prenom: 'Paul',
+                conducteur_photo: '../uploads/687ce7e77a868_photo utilisateur.png',
+                note_moyenne: 4.0,
+                marque: 'Renault',
+                modele: 'Clio',
+                energie: 'essence'
+            }
+        ];
+
+        // Fonction pour calculer la durée entre deux dates
+        function calculateDuration(dateDepart, dateArriver) {
+            const debut = new Date(dateDepart);
+            const fin = new Date(dateArriver);
+            const diffMs = fin - debut;
+            const diffMinutes = Math.floor(diffMs / (1000 * 60));
+            
+            const hours = Math.floor(diffMinutes / 60);
+            const minutes = diffMinutes % 60;
+            
+            if (hours > 0 && minutes > 0) {
+                return `${hours}h${minutes}min`;
+            } else if (hours > 0) {
+                return `${hours}h`;
+            } else if (minutes > 0) {
+                return `${minutes}min`;
+            } else {
+                return '0min';
+            }
+        }
+
+        // Fonction pour formater la date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            }) + ' à ' + date.toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Fonction pour afficher les trajets
+        function displayRides(rides = sampleRides) {
+            const container = document.getElementById('rides-container');
+            
+            if (rides.length === 0) {
+                container.innerHTML = '<div>Aucun trajet disponible.</div>';
+                return;
+            }
+
+            container.innerHTML = rides.map(trajet => {
+                const duration = calculateDuration(trajet.date_depart, trajet.date_arriver);
+                const isEcologique = trajet.energie?.toLowerCase() === 'electrique';
+                const departDate = formatDate(trajet.date_depart);
+                
+                return `
+                    <div class="ride-info" data-ride-id="${trajet.id}">
+                        <div class="ride-time">
+                            <div class="departure-time">${departDate}</div>
+                            <div class="duration">${duration}</div>
+                        </div>
+                        <img src="${trajet.conducteur_photo || '../assets/default-avatar.png'}" 
+                             alt="${trajet.conducteur_nom}" 
+                             class="ride-avatar"
+                             onerror="this.src='../assets/default-avatar.png'">
+                        <div class="ride-details">
+                            <strong>${trajet.conducteur_nom} ${trajet.conducteur_prenom}</strong>
+                            <span>★ ${trajet.note_moyenne ? trajet.note_moyenne.toFixed(1) : '4.0'}</span><br>
+                            <span>${trajet.nb_places} place(s) restantes</span>
+                            ${isEcologique ? '<span class="eco-label">Ecologique</span>' : ''}
+                            <br>
+                            <span class="route">${trajet.depart} → ${trajet.arrivee}</span><br>
+                            <span class="price">${trajet.tarif} €</span>
+                            <span class="vehicle">${trajet.marque} ${trajet.modele}</span>
+                        </div>
+                        <div class="ride-actions">
+                            <button class="btn-detail" onclick="showRideDetails(${trajet.id})">Détail</button>
+                            <button class="btn-participer" onclick="participateInRide(${trajet.id})">Participer</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Fonction de recherche
+        function searchRides() {
+            const depart = document.getElementById('depart').value.toLowerCase();
+            const destination = document.getElementById('destination').value.toLowerCase();
+            const date = document.getElementById('date').value;
+            const passagers = document.getElementById('passagers').value;
+
+            let filteredRides = sampleRides;
+
+            // Filtrer par départ
+            if (depart.trim()) {
+                filteredRides = filteredRides.filter(ride => 
+                    ride.depart.toLowerCase().includes(depart)
+                );
+            }
+
+            // Filtrer par destination
+            if (destination.trim()) {
+                filteredRides = filteredRides.filter(ride => 
+                    ride.arrivee.toLowerCase().includes(destination)
+                );
+            }
+
+            // Filtrer par date
+            if (date) {
+                filteredRides = filteredRides.filter(ride => {
+                    const rideDate = new Date(ride.date_depart).toISOString().split('T')[0];
+                    return rideDate === date;
+                });
+            }
+
+            // Filtrer par nombre de passagers
+            if (passagers && passagers !== 'Passagers') {
+                const nbPassagers = passagers === '3+' ? 3 : parseInt(passagers);
+                filteredRides = filteredRides.filter(ride => 
+                    ride.nb_places >= nbPassagers
+                );
+            }
+
+            displayRides(filteredRides);
+        }
+
+        // Fonction pour afficher les détails d'un trajet
+        function showRideDetails(rideId) {
+            const ride = sampleRides.find(r => r.id === rideId);
+            if (ride) {
+                alert(`Détails du trajet:
+                
+Conducteur: ${ride.conducteur_nom} ${ride.conducteur_prenom}
+Véhicule: ${ride.marque} ${ride.modele} (${ride.energie})
+Trajet: ${ride.depart} → ${ride.arrivee}
+Départ: ${formatDate(ride.date_depart)}
+Durée: ${calculateDuration(ride.date_depart, ride.date_arriver)}
+Prix: ${ride.tarif}€
+Places disponibles: ${ride.nb_places}
+Note moyenne: ${ride.note_moyenne ? ride.note_moyenne.toFixed(1) : '4.0'}★`);
+            }
+        }
+
+        // Fonction pour participer à un trajet
+        function participateInRide(rideId) {
+            if (!auth.isLoggedIn()) {
+                alert('Vous devez être connecté pour participer à un trajet.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const ride = sampleRides.find(r => r.id === rideId);
+            if (ride && ride.nb_places > 0) {
+                const confirm = window.confirm(`Voulez-vous participer au trajet ${ride.depart} → ${ride.arrivee} pour ${ride.tarif}€ ?`);
+                if (confirm) {
+                    // Simuler la participation
+                    ride.nb_places--;
+                    displayRides();
+                    alert('Votre participation a été enregistrée !');
+                }
+            } else {
+                alert('Désolé, ce trajet n\'a plus de places disponibles.');
+            }
+        }
+
+        // Mettre à jour la navbar selon l'état de connexion
+        function updateNavbar() {
+            const dropdown = document.getElementById('navbar-dropdown');
+            if (auth.isLoggedIn()) {
+                const user = auth.getCurrentUser();
+                dropdown.innerHTML = `
+                    <a href="${user.role === 'conducteur' ? 'comptecon' : 'comptevoyageur'}.html">Mon compte</a>
+                    <a href="#" onclick="handleLogout()">Déconnexion</a>
+                `;
+            }
+        }
+
+        // Fonction de déconnexion
+        function handleLogout() {
+            auth.logout();
+            updateNavbar();
+            window.location.href = '../../index.html';
+        }
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayRides();
+            updateNavbar();
+            
+            // Définir la date par défaut à aujourd'hui
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+        });
+    </script>
+</body>
+</html>
