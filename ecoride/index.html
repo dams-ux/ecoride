@@ -99,5 +99,69 @@
     <script src="src/scripts/fonction.js"></script>
     <script src="src/scripts/trajet.js"></script>
     <script src="src/scripts/auth.js"></script>
+    <script>
+        // Mettre à jour l'interface utilisateur selon l'état de connexion
+        function updateNavbarUI() {
+            const dropdownContent = document.querySelector('.dropdown-content');
+            if (auth && auth.isLoggedIn()) {
+                const currentUser = auth.getCurrentUser();
+                const userRole = currentUser.role;
+                const accountPage = userRole === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html';
+                
+                dropdownContent.innerHTML = `
+                    <a href="src/pages/${accountPage}">Mon compte</a>
+                    <a href="#" onclick="handleLogout()">Déconnexion</a>
+                `;
+            }
+        }
+
+        // Fonction de déconnexion
+        function handleLogout() {
+            if (auth) {
+                auth.logout();
+                updateNavbarUI();
+                window.location.reload();
+            }
+        }
+
+        // Fonction de recherche
+        function searchRides() {
+            // Rediriger vers la page covoiturage avec les paramètres de recherche
+            const depart = document.getElementById('depart').value;
+            const destination = document.getElementById('destination').value;
+            const date = document.getElementById('date').value;
+            const passagers = document.getElementById('passagers').value;
+            
+            let url = 'src/pages/covoiturage.html';
+            const params = new URLSearchParams();
+            
+            if (depart) params.append('depart', depart);
+            if (destination) params.append('destination', destination);
+            if (date) params.append('date', date);
+            if (passagers && passagers !== 'Passagers') params.append('passagers', passagers);
+            
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+            
+            window.location.href = url;
+        }
+
+        // Initialiser l'interface au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attendre que auth.js soit chargé
+            setTimeout(() => {
+                if (typeof auth !== 'undefined') {
+                    updateNavbarUI();
+                }
+            }, 100);
+            
+            // Ajouter l'événement de recherche au bouton
+            const searchButton = document.querySelector('.barre-recherche button');
+            if (searchButton) {
+                searchButton.addEventListener('click', searchRides);
+            }
+        });
+    </script>
 </body>
 </html>

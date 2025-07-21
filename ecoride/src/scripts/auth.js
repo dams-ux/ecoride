@@ -1,17 +1,27 @@
 // Système d'authentification côté client pour remplacer PHP
 class AuthSystem {
     constructor() {
-        this.users = JSON.parse(localStorage.getItem('ecoride_users')) || {
-            conducteurs: [],
-            voyageurs: []
-        };
-        this.currentUser = JSON.parse(localStorage.getItem('ecoride_current_user')) || null;
+        try {
+            this.users = JSON.parse(localStorage.getItem('ecoride_users')) || {
+                conducteurs: [],
+                voyageurs: []
+            };
+            this.currentUser = JSON.parse(localStorage.getItem('ecoride_current_user')) || null;
+        } catch (error) {
+            console.warn('Erreur lors du chargement des données utilisateur:', error);
+            this.users = { conducteurs: [], voyageurs: [] };
+            this.currentUser = null;
+        }
     }
 
     // Sauvegarder les données dans localStorage
     saveData() {
-        localStorage.setItem('ecoride_users', JSON.stringify(this.users));
-        localStorage.setItem('ecoride_current_user', JSON.stringify(this.currentUser));
+        try {
+            localStorage.setItem('ecoride_users', JSON.stringify(this.users));
+            localStorage.setItem('ecoride_current_user', JSON.stringify(this.currentUser));
+        } catch (error) {
+            console.error('Erreur lors de la sauvegarde:', error);
+        }
     }
 
     // Inscription

@@ -84,6 +84,17 @@
     <script src="../scripts/fonction.js"></script>
     <script src="../scripts/trajet.js"></script>
     <script>
+        // Fonction pour récupérer les paramètres URL
+        function getURLParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                depart: params.get('depart') || '',
+                destination: params.get('destination') || '',
+                date: params.get('date') || '',
+                passagers: params.get('passagers') || ''
+            };
+        }
+
         // Données d'exemple pour les trajets (remplace la base de données)
         const sampleRides = [
             {
@@ -96,7 +107,7 @@
                 nb_places: 3,
                 conducteur_nom: 'Dupont',
                 conducteur_prenom: 'Jean',
-                conducteur_photo: '../uploads/687cb678de825_photo utilisateur 2.png',
+                conducteur_photo: 'assets/default-avatar.png',
                 note_moyenne: 4.5,
                 marque: 'Tesla',
                 modele: 'Model 3',
@@ -112,7 +123,7 @@
                 nb_places: 2,
                 conducteur_nom: 'Martin',
                 conducteur_prenom: 'Sophie',
-                conducteur_photo: '../uploads/687ce7dbe0399_photo utilisateur.png',
+                conducteur_photo: 'assets/default-avatar.png',
                 note_moyenne: 4.2,
                 marque: 'Peugeot',
                 modele: '308',
@@ -128,7 +139,7 @@
                 nb_places: 1,
                 conducteur_nom: 'Garcia',
                 conducteur_prenom: 'Maria',
-                conducteur_photo: '../uploads/687ce7e67b1be_photo utilisateur.png',
+                conducteur_photo: 'assets/default-avatar.png',
                 note_moyenne: 4.8,
                 marque: 'BMW',
                 modele: 'i3',
@@ -144,7 +155,7 @@
                 nb_places: 4,
                 conducteur_nom: 'Bernard',
                 conducteur_prenom: 'Paul',
-                conducteur_photo: '../uploads/687ce7e77a868_photo utilisateur.png',
+                conducteur_photo: 'assets/default-avatar.png',
                 note_moyenne: 4.0,
                 marque: 'Renault',
                 modele: 'Clio',
@@ -206,10 +217,10 @@
                             <div class="departure-time">${departDate}</div>
                             <div class="duration">${duration}</div>
                         </div>
-                        <img src="${trajet.conducteur_photo || '../assets/default-avatar.png'}" 
+                        <img src="${trajet.conducteur_photo || 'assets/default-avatar.svg'}" 
                              alt="${trajet.conducteur_nom}" 
                              class="ride-avatar"
-                             onerror="this.src='../assets/default-avatar.png'">
+                             onerror="this.src='assets/default-avatar.svg'">
                         <div class="ride-details">
                             <strong>${trajet.conducteur_nom} ${trajet.conducteur_prenom}</strong>
                             <span>★ ${trajet.note_moyenne ? trajet.note_moyenne.toFixed(1) : '4.0'}</span><br>
@@ -331,12 +342,39 @@ Note moyenne: ${ride.note_moyenne ? ride.note_moyenne.toFixed(1) : '4.0'}★`);
 
         // Initialisation au chargement de la page
         document.addEventListener('DOMContentLoaded', function() {
-            displayRides();
-            updateNavbar();
-            
-            // Définir la date par défaut à aujourd'hui
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('date').value = today;
+            try {
+                // Appliquer les paramètres URL s'ils existent
+                const urlParams = getURLParams();
+                if (urlParams.depart) document.getElementById('depart').value = urlParams.depart;
+                if (urlParams.destination) document.getElementById('destination').value = urlParams.destination;
+                if (urlParams.date) document.getElementById('date').value = urlParams.date;
+                if (urlParams.passagers) document.getElementById('passagers').value = urlParams.passagers;
+                
+                // Afficher les trajets
+                displayRides();
+                
+                // Mettre à jour la navbar
+                setTimeout(() => {
+                    if (typeof auth !== 'undefined') {
+                        updateNavbar();
+                    }
+                }, 100);
+                
+                // Définir la date par défaut à aujourd'hui
+                if (!urlParams.date) {
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('date').value = today;
+                }
+                
+                // Faire une recherche automatique si des paramètres sont présents
+                if (urlParams.depart || urlParams.destination || urlParams.date || urlParams.passagers) {
+                    searchRides();
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'initialisation:', error);
+                // Afficher les trajets par défaut même en cas d'erreur
+                displayRides();
+            }
         });
     </script>
 </body>
