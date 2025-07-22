@@ -15,7 +15,14 @@ class AuthManager {
                 localStorage.setItem(this.storageKey, JSON.stringify(result.user));
                 
                 // Déterminer la page de redirection selon le rôle
-                const redirectUrl = result.user.role === 'conducteur' ? 'comptecon-new.html' : 'comptevoyageur.html';
+                let redirectUrl;
+                if (result.user.role === 'admin') {
+                    redirectUrl = 'admin-dashboard.html';
+                } else if (result.user.role === 'conducteur') {
+                    redirectUrl = 'comptecon-new.html';
+                } else {
+                    redirectUrl = 'comptevoyageur.html';
+                }
                 
                 return {
                     success: true,
@@ -102,7 +109,14 @@ class AuthManager {
     redirectToDashboard() {
         if (this.isLoggedIn()) {
             const user = this.getCurrentUser();
-            const redirectUrl = user.role === 'conducteur' ? 'comptecon-new.html' : 'comptevoyageur.html';
+            let redirectUrl;
+            if (user.role === 'admin') {
+                redirectUrl = 'admin-dashboard.html';
+            } else if (user.role === 'conducteur') {
+                redirectUrl = 'comptecon-new.html';
+            } else {
+                redirectUrl = 'comptevoyageur.html';
+            }
             window.location.href = redirectUrl;
         }
     }

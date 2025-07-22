@@ -46,6 +46,21 @@ class SupabaseClient {
     // Authentification utilisateur
     async authenticateUser(email, password) {
         try {
+            // Vérification du compte admin de test
+            if (email === 'admin@ecoride.com' && password === 'admin123') {
+                return {
+                    success: true,
+                    user: {
+                        id: 'admin-001',
+                        nom: 'EcoRide',
+                        prenom: 'Admin',
+                        email: 'admin@ecoride.com',
+                        photo: null,
+                        role: 'admin'
+                    }
+                };
+            }
+            
             // Rechercher l'utilisateur par email
             const users = await this.apiRequest(`/users?email=eq.${email}&select=*`);
             

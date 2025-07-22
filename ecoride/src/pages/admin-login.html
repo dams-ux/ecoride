@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Page de connexion administrateur pour ECORIDE">
+    <meta charset="UTF-8">
+    <title>Connexion Admin - ECORIDE</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .admin-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .login-container h2 {
+            color: #6d28d9;
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .admin-subtitle {
+            color: #8b5cf6;
+            font-size: 14px;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #6d28d9;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .login-btn:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            transform: translateY(-2px);
+        }
+        
+        .back-link {
+            margin-top: 25px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .back-link a {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        #login-message {
+            margin-bottom: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .admin-info {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+        
+        .admin-info strong {
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar-ecoride">
+        <div class="navbar-left">
+            <img src="assets/image voiture.png" alt="image voiture" class="navbar-logo">
+        </div>
+        <div class="navbar-center">
+            <a href="../../index.html" class="navbar-btn">Accueil</a>
+            <a href="covoiturage-new.html" class="navbar-btn">Covoiturage</a>
+            <a href="#" class="navbar-btn">Contact</a>
+        </div>
+        <div class="navbar-right" style="position:relative;">
+            <div class="dropdown-user">
+                <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                    <img src="assets/Icon.png" alt="Utilisateur" style="height:32px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle; margin-left:3px;">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content">
+                    <a href="login.html">Connexion</a>
+                    <a href="signup-new.html">Inscription</a>
+                </div>
+            </div>
+            <img src="assets/image energie.png" alt="Energie" class="navbar-energie">
+        </div>
+    </nav>
+
+    <div class="login-container">
+        <div class="admin-logo">🔐</div>
+        <h2>Administration EcoRide</h2>
+        <p class="admin-subtitle">Espace réservé aux administrateurs</p>
+        
+        <div class="admin-info">
+            <strong>Compte de test :</strong><br>
+            Email: admin@ecoride.com<br>
+            Mot de passe: admin123
+        </div>
+        
+        <div id="login-message"></div>
+        
+        <form id="admin-login-form">
+            <div class="form-group">
+                <label for="email">Adresse e-mail administrateur</label>
+                <input type="email" id="email" name="email" required placeholder="admin@ecoride.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required placeholder="Mot de passe admin">
+            </div>
+            
+            <button type="submit" class="login-btn">Accéder à l'administration</button>
+        </form>
+        
+        <p class="back-link">
+            <a href="../../index.html">← Retour à l'accueil</a>
+        </p>
+    </div>
+
+    <script src="../scripts/supabase-client.js"></script>
+    <script src="../scripts/auth-new.js"></script>
+    <script>
+        document.getElementById('admin-login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('login-message');
+            
+            // Afficher le message de chargement
+            messageDiv.style.display = 'block';
+            messageDiv.textContent = 'Vérification des droits administrateur...';
+            messageDiv.style.backgroundColor = '#ddd6fe';
+            messageDiv.style.color = '#6d28d9';
+            messageDiv.style.border = '1px solid #c4b5fd';
+            
+            try {
+                const result = await auth.login(email, password);
+                
+                // Vérifier si c'est un admin
+                if (result.success && result.user && result.user.role === 'admin') {
+                    messageDiv.textContent = result.message;
+                    messageDiv.style.backgroundColor = '#d4edda';
+                    messageDiv.style.color = '#155724';
+                    messageDiv.style.border = '1px solid #c3e6cb';
+                    
+                    setTimeout(() => {
+                        window.location.href = result.redirectUrl;
+                    }, 1000);
+                } else if (result.success) {
+                    // Utilisateur connecté mais pas admin
+                    messageDiv.textContent = 'Accès refusé. Seuls les administrateurs peuvent accéder à cette section.';
+                    messageDiv.style.backgroundColor = '#fff3cd';
+                    messageDiv.style.color = '#856404';
+                    messageDiv.style.border = '1px solid #ffeaa7';
+                } else {
+                    // Échec de connexion
+                    messageDiv.textContent = result.message;
+                    messageDiv.style.backgroundColor = '#f8d7da';
+                    messageDiv.style.color = '#721c24';
+                    messageDiv.style.border = '1px solid #f5c6cb';
+                }
+            } catch (error) {
+                console.error('Erreur de connexion admin:', error);
+                messageDiv.textContent = 'Erreur de connexion. Veuillez réessayer.';
+                messageDiv.style.backgroundColor = '#f8d7da';
+                messageDiv.style.color = '#721c24';
+                messageDiv.style.border = '1px solid #f5c6cb';
+            }
+        });
+
+        // Vérifier si l'utilisateur est déjà connecté en tant qu'admin
+        document.addEventListener('DOMContentLoaded', function() {
+            if (auth.isLoggedIn()) {
+                const user = auth.getCurrentUser();
+                if (user && user.role === 'admin') {
+                    window.location.href = 'admin-dashboard.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
