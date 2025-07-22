@@ -1,11 +1,11 @@
-# Carpooling Application
+# ecoride Application
 
 ## Overview
-This is a carpooling application that allows users to create accounts, sign up, and log in to find carpooling opportunities. The application aims to facilitate shared transportation, making it easier for users to connect and travel together.
+This is a ecoride application that allows users to create accounts, sign up, and log in to find carpooling opportunities. The application aims to facilitate shared transportation, making it easier for users to connect and travel together.
 
 ## Project Structure
 ```
-carpooling-app
+ecoride-app
 ├── src
 │   ├── index.html          # Main entry point of the application
 │   ├── styles
