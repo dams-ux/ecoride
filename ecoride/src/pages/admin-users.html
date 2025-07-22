@@ -31,7 +31,7 @@
                 </span>
                 <div class="dropdown-content">
                     <a href="admin-profile.html">Mon profil</a>
-                    <a href="#" onclick="handleLogout()">Déconnexion</a>
+                    <button onclick="handleLogout()" style="background: none; border: none; color: inherit; cursor: pointer; text-align: left; width: 100%;">Déconnexion</button>
                 </div>
             </div>
         </div>
@@ -210,6 +210,25 @@
                 this.displayPendingReviews();
             }
 
+            // Fonctions helper pour les statuts et couleurs
+            getStatusClass(status) {
+                if (status === 'active') return 'status-active';
+                if (status === 'suspended') return 'status-suspended';
+                return 'status-pending';
+            }
+
+            getStatusText(status) {
+                if (status === 'active') return 'Actif';
+                if (status === 'suspended') return 'Suspendu';
+                return 'En attente';
+            }
+
+            getRatingColor(rating) {
+                if (rating >= 4) return '#10b981';
+                if (rating >= 3) return '#f59e0b';
+                return '#ef4444';
+            }
+
             // Charger les utilisateurs
             async loadUsers() {
                 try {
@@ -364,14 +383,12 @@
                             </span>
                         </td>
                         <td>
-                            <span class="status-badge ${user.status === 'active' ? 'status-active' : 
-                                                     user.status === 'suspended' ? 'status-suspended' : 'status-pending'}">
-                                ${user.status === 'active' ? 'Actif' : 
-                                  user.status === 'suspended' ? 'Suspendu' : 'En attente'}
+                            <span class="status-badge ${this.getStatusClass(user.status)}">
+                                ${this.getStatusText(user.status)}
                             </span>
                         </td>
                         <td>
-                            <span style="color: ${user.note_moyenne >= 4 ? '#10b981' : user.note_moyenne >= 3 ? '#f59e0b' : '#ef4444'};">
+                            <span style="color: ${this.getRatingColor(user.note_moyenne)};">
                                 ⭐ ${user.note_moyenne}/5
                             </span>
                         </td>
@@ -412,7 +429,7 @@
                                 <strong>${review.auteur}</strong> → <strong>${review.cible}</strong>
                                 <div style="color: #6b7280; font-size: 0.9rem;">${review.trajet} • ${new Date(review.date).toLocaleDateString('fr-FR')}</div>
                             </div>
-                            <div style="color: ${review.note >= 4 ? '#10b981' : review.note >= 3 ? '#f59e0b' : '#ef4444'}; font-weight: bold;">
+                            <div style="color: ${this.getRatingColor(review.note)}; font-weight: bold;">
                                 ${'⭐'.repeat(review.note)} (${review.note}/5)
                             </div>
                         </div>
@@ -491,10 +508,8 @@
                         <p><strong>Note moyenne :</strong> ⭐ ${user.note_moyenne}/5</p>
                         <p><strong>Nombre de trajets :</strong> ${user.nb_trajets}</p>
                         <p><strong>Status :</strong> 
-                            <span class="status-badge ${user.status === 'active' ? 'status-active' : 
-                                                     user.status === 'suspended' ? 'status-suspended' : 'status-pending'}">
-                                ${user.status === 'active' ? 'Actif' : 
-                                  user.status === 'suspended' ? 'Suspendu' : 'En attente'}
+                            <span class="status-badge ${this.getStatusClass(user.status)}">
+                                ${this.getStatusText(user.status)}
                             </span>
                         </p>
                         ${user.motif_suspension ? `<p><strong>Motif de suspension :</strong> ${user.motif_suspension}</p>` : ''}

@@ -717,7 +717,8 @@ function integrateNavbar(filePath) {
             console.log(`✅ Navbar remplacée dans ${filePath}`);
         } else {
             // Insérer après <body>
-            const bodyMatch = content.match(/<body[^>]*>/);
+            const bodyRegex = /<body[^>]*>/;
+            const bodyMatch = bodyRegex.exec(content);
             if (bodyMatch) {
                 const insertIndex = content.indexOf(bodyMatch[0]) + bodyMatch[0].length;
                 content = content.slice(0, insertIndex) + '\n' + responsiveNavbar + '\n' + content.slice(insertIndex);

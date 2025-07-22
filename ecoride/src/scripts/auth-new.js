@@ -8,7 +8,7 @@ class AuthManager {
     async login(email, password) {
         try {
             // Tentative de connexion via Supabase
-            const result = await database.authenticateUser(email, password);
+            const result = database.authenticateUser(email, password);
             
             if (result.success) {
                 // Sauvegarder l'utilisateur dans localStorage

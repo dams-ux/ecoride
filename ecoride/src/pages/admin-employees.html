@@ -31,7 +31,7 @@
                 </span>
                 <div class="dropdown-content">
                     <a href="admin-profile.html">Mon profil</a>
-                    <a href="#" onclick="handleLogout()">Déconnexion</a>
+                    <button onclick="handleLogout()" style="background: none; border: none; color: inherit; cursor: pointer; text-align: left; width: 100%;">Déconnexion</button>
                 </div>
             </div>
         </div>
@@ -196,6 +196,19 @@
                 this.loadEmployees();
             }
 
+            // Fonctions helper pour les statuts
+            getStatusClass(status) {
+                if (status === 'active') return 'status-active';
+                if (status === 'suspended') return 'status-suspended';
+                return 'status-pending';
+            }
+
+            getStatusText(status) {
+                if (status === 'active') return 'Actif';
+                if (status === 'suspended') return 'Suspendu';
+                return 'En attente';
+            }
+
             // Charger la liste des employés
             async loadEmployees() {
                 try {
@@ -271,10 +284,8 @@
                         <td>${employee.email}</td>
                         <td>${employee.poste}</td>
                         <td>
-                            <span class="status-badge ${employee.status === 'active' ? 'status-active' : 
-                                                     employee.status === 'suspended' ? 'status-suspended' : 'status-pending'}">
-                                ${employee.status === 'active' ? 'Actif' : 
-                                  employee.status === 'suspended' ? 'Suspendu' : 'En attente'}
+                            <span class="status-badge ${this.getStatusClass(employee.status)}">
+                                ${this.getStatusText(employee.status)}
                             </span>
                         </td>
                         <td>${employee.derniere_connexion}</td>

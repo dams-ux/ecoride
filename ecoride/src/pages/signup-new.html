@@ -293,6 +293,7 @@
                         }, 2000);
                     }
                 } catch (error) {
+                    console.error('Erreur lors de l\'inscription:', error);
                     showMessage('Erreur lors de l\'inscription. Veuillez réessayer.', 'error');
                 }
             });

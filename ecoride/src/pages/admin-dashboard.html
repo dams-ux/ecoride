@@ -173,7 +173,13 @@
     <!-- Scripts -->
     <script src="../scripts/supabase-client.js"></script>
     <script src="../scripts/auth-new.js"></script>
+    <!-- Scripts nécessaires -->
+    <script src="../scripts/auth-new.js"></script>
     <script>
+        // Validation des dépendances
+        if (typeof auth === 'undefined') {
+            console.error('ERREUR: Le module auth n\'est pas chargé');
+        }
         // 📊 Données réelles pour les graphiques
         class AdminDashboard {
             constructor() {
@@ -358,46 +364,94 @@
 
         // Vérifier les permissions admin
         function checkAdminAccess() {
-            if (typeof auth === 'undefined') {
-                console.log('Auth non disponible, redirection...');
+            try {
+                if (typeof auth === 'undefined') {
+                    console.error('Module auth non chargé');
+                    window.location.href = 'login.html';
+                    return false;
+                }
+                
+                if (!auth.isLoggedIn()) {
+                    console.log('Utilisateur non connecté');
+                    window.location.href = 'login.html';
+                    return false;
+                }
+                
+                const user = auth.getCurrentUser();
+                if (!user) {
+                    console.error('Impossible de récupérer les données utilisateur');
+                    window.location.href = 'login.html';
+                    return false;
+                }
+                
+                if (user.role !== 'admin') {
+                    console.warn('Accès non autorisé - rôle:', user.role);
+                    alert('Accès refusé. Seuls les administrateurs peuvent accéder à cette page.');
+                    window.location.href = '../index.html';
+                    return false;
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Erreur lors de la vérification des permissions:', error);
                 window.location.href = 'login.html';
                 return false;
             }
-            
-            if (!auth.isLoggedIn()) {
+        }
+
+        // Fonction de déconnexion
+        function handleLogout() {
+            try {
+                if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                    if (typeof auth !== 'undefined') {
+                        auth.logout();
+                    } else {
+                        localStorage.clear();
+                    }
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la déconnexion:', error);
                 window.location.href = 'login.html';
-                return false;
             }
-            
-            const user = auth.getCurrentUser();
-            if (!user || user.role !== 'admin') {
-                alert('Accès refusé. Seuls les administrateurs peuvent accéder à cette page.');
-                window.location.href = '../index.html';
-                return false;
-            }
-            
-            return true;
         }
 
         // Initialisation de la page
         document.addEventListener('DOMContentLoaded', async function() {
-            // Vérifier les permissions
-            if (!checkAdminAccess()) return;
-            
-            // Initialiser le dashboard
-            const dashboard = new AdminDashboard();
-            
-            // Charger l'activité récente
-            setTimeout(() => dashboard.loadRecentActivity(), 1000);
-            
-            // Rafraîchir les données toutes les 5 minutes
-            setInterval(() => {
-                dashboard.loadRealData().then(() => {
-                    dashboard.generateRevenueChart();
-                    dashboard.generateRidesChart();
-                    dashboard.updateStats();
-                });
-            }, 300000); // 5 minutes
+            try {
+                // Vérifier les permissions
+                if (!checkAdminAccess()) return;
+                
+                // Initialiser le dashboard
+                const dashboard = new AdminDashboard();
+                
+                // Charger l'activité récente
+                setTimeout(() => {
+                    try {
+                        dashboard.loadRecentActivity();
+                    } catch (error) {
+                        console.error('Erreur lors du chargement de l\'activité récente:', error);
+                    }
+                }, 1000);
+                
+                // Rafraîchir les données toutes les 5 minutes
+                setInterval(() => {
+                    try {
+                        dashboard.loadRealData().then(() => {
+                            dashboard.generateRevenueChart();
+                            dashboard.generateRidesChart();
+                            dashboard.updateStats();
+                        }).catch(error => {
+                            console.error('Erreur lors du rafraîchissement des données:', error);
+                        });
+                    } catch (error) {
+                        console.error('Erreur dans l\'interval de rafraîchissement:', error);
+                    }
+                }, 300000); // 5 minutes
+            } catch (error) {
+                console.error('Erreur lors de l\'initialisation du dashboard:', error);
+                alert('Erreur lors du chargement du dashboard.');
+            }
         });
     </script>
 </body>
