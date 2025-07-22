@@ -49,6 +49,7 @@
         <div class="tabs">
             <button class="tab-button active" onclick="openTab(event, 'reservations-tab')">Mes Réservations</button>
             <button class="tab-button" onclick="openTab(event, 'historique-tab')">Historique</button>
+            <button class="tab-button" onclick="openTab(event, 'avis-tab')">Mes Avis</button>
             <button class="tab-button" onclick="openTab(event, 'profil-tab')">Mon Profil</button>
         </div>
 
@@ -68,6 +69,46 @@
             
             <div class="historique-list" id="historique-list">
                 <!-- L'historique sera affiché ici -->
+            </div>
+        </div>
+
+        <!-- Onglet Avis -->
+        <div id="avis-tab" class="tab-content">
+            <h2>Mes Avis</h2>
+            
+            <div class="avis-section">
+                <h3>Donner un avis</h3>
+                <form id="avis-form">
+                    <div class="form-group">
+                        <label for="trajet-select">Trajet à évaluer:</label>
+                        <select id="trajet-select" required>
+                            <option value="">Choisir un trajet...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="note">Note (sur 5):</label>
+                        <div class="star-rating">
+                            <span class="star" data-rating="1">⭐</span>
+                            <span class="star" data-rating="2">⭐</span>
+                            <span class="star" data-rating="3">⭐</span>
+                            <span class="star" data-rating="4">⭐</span>
+                            <span class="star" data-rating="5">⭐</span>
+                        </div>
+                        <input type="hidden" id="note" name="note" value="5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="commentaire">Commentaire:</label>
+                        <textarea id="commentaire" name="commentaire" rows="4" placeholder="Partagez votre expérience..."></textarea>
+                    </div>
+                    
+                    <button type="submit">Publier l'avis</button>
+                </form>
+            </div>
+
+            <div class="mes-avis-list" id="mes-avis-list">
+                <!-- Les avis déjà donnés seront affichés ici -->
             </div>
         </div>
 
@@ -100,6 +141,7 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="../scripts/database.js"></script>
     <script src="../scripts/auth.js"></script>
     <script>
         // Vérifier si l'utilisateur est connecté et est un voyageur
@@ -115,6 +157,7 @@
                 this.userId = userId;
                 this.reservations = JSON.parse(localStorage.getItem(`reservations_${userId}`)) || [];
                 this.historique = JSON.parse(localStorage.getItem(`historique_${userId}`)) || [];
+                this.loadAvis();
                 this.initSampleData();
             }
 
@@ -206,6 +249,27 @@
                     return { success: true, message: 'Note et commentaire enregistrés.' };
                 }
                 return { success: false, message: 'Trajet non trouvé.' };
+            }
+
+            // Ajouter un nouvel avis
+            addAvis(avisData) {
+                if (!this.avis) this.avis = [];
+                const nouvelAvis = {
+                    id: Date.now(),
+                    ...avisData,
+                    date_avis: new Date().toISOString()
+                };
+                this.avis.push(nouvelAvis);
+                this.saveAvis();
+                return { success: true, message: 'Avis publié avec succès.' };
+            }
+
+            saveAvis() {
+                localStorage.setItem(`avis_${this.userId}`, JSON.stringify(this.avis || []));
+            }
+
+            loadAvis() {
+                this.avis = JSON.parse(localStorage.getItem(`avis_${this.userId}`) || '[]');
             }
         }
 

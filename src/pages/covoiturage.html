@@ -80,6 +80,7 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="../scripts/database.js"></script>
     <script src="../scripts/auth.js"></script>
     <script src="../scripts/fonction.js"></script>
     <script src="../scripts/trajet.js"></script>
@@ -95,285 +96,155 @@
             };
         }
 
-        // Données d'exemple pour les trajets (remplace la base de données)
-        const sampleRides = [
-            {
-                id: 1,
-                depart: 'Paris',
-                arrivee: 'Lyon',
-                date_depart: '2025-07-22 08:00:00',
-                date_arriver: '2025-07-22 12:30:00',
-                tarif: 45,
-                nb_places: 3,
-                conducteur_nom: 'Dupont',
-                conducteur_prenom: 'Jean',
-                conducteur_photo: 'assets/default-avatar.png',
-                note_moyenne: 4.5,
-                marque: 'Tesla',
-                modele: 'Model 3',
-                energie: 'electrique'
-            },
-            {
-                id: 2,
-                depart: 'Marseille',
-                arrivee: 'Nice',
-                date_depart: '2025-07-23 14:00:00',
-                date_arriver: '2025-07-23 16:30:00',
-                tarif: 25,
-                nb_places: 2,
-                conducteur_nom: 'Martin',
-                conducteur_prenom: 'Sophie',
-                conducteur_photo: 'assets/default-avatar.png',
-                note_moyenne: 4.2,
-                marque: 'Peugeot',
-                modele: '308',
-                energie: 'essence'
-            },
-            {
-                id: 3,
-                depart: 'Toulouse',
-                arrivee: 'Bordeaux',
-                date_depart: '2025-07-24 09:30:00',
-                date_arriver: '2025-07-24 12:00:00',
-                tarif: 35,
-                nb_places: 1,
-                conducteur_nom: 'Garcia',
-                conducteur_prenom: 'Maria',
-                conducteur_photo: 'assets/default-avatar.png',
-                note_moyenne: 4.8,
-                marque: 'BMW',
-                modele: 'i3',
-                energie: 'electrique'
-            },
-            {
-                id: 4,
-                depart: 'Lille',
-                arrivee: 'Strasbourg',
-                date_depart: '2025-07-25 07:00:00',
-                date_arriver: '2025-07-25 12:30:00',
-                tarif: 55,
-                nb_places: 4,
-                conducteur_nom: 'Bernard',
-                conducteur_prenom: 'Paul',
-                conducteur_photo: 'assets/default-avatar.png',
-                note_moyenne: 4.0,
-                marque: 'Renault',
-                modele: 'Clio',
-                energie: 'essence'
-            }
-        ];
-
-        // Fonction pour calculer la durée entre deux dates
-        function calculateDuration(dateDepart, dateArriver) {
-            const debut = new Date(dateDepart);
-            const fin = new Date(dateArriver);
-            const diffMs = fin - debut;
-            const diffMinutes = Math.floor(diffMs / (1000 * 60));
-            
-            const hours = Math.floor(diffMinutes / 60);
-            const minutes = diffMinutes % 60;
-            
-            if (hours > 0 && minutes > 0) {
-                return `${hours}h${minutes}min`;
-            } else if (hours > 0) {
-                return `${hours}h`;
-            } else if (minutes > 0) {
-                return `${minutes}min`;
-            } else {
-                return '0min';
-            }
-        }
-
-        // Fonction pour formater la date
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('fr-FR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            }) + ' à ' + date.toLocaleTimeString('fr-FR', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        // Fonction pour afficher les trajets
-        function displayRides(rides = sampleRides) {
+        // Fonction pour charger et afficher les trajets depuis la base de données
+        function loadRidesFromDatabase(filters = {}) {
             const container = document.getElementById('rides-container');
             
-            if (rides.length === 0) {
-                container.innerHTML = '<div>Aucun trajet disponible.</div>';
+            if (typeof database === 'undefined') {
+                container.innerHTML = '<p>Base de données non disponible</p>';
                 return;
             }
 
-            container.innerHTML = rides.map(trajet => {
-                const duration = calculateDuration(trajet.date_depart, trajet.date_arriver);
-                const isEcologique = trajet.energie?.toLowerCase() === 'electrique';
-                const departDate = formatDate(trajet.date_depart);
+            // Récupérer les trajets (filtrés ou tous)
+            const trajets = filters && Object.keys(filters).length > 0 
+                ? database.searchTrajets(filters)
+                : database.getTrajetsDisponibles();
+
+            if (trajets.length === 0) {
+                container.innerHTML = '<p>Aucun trajet disponible pour cette recherche.</p>';
+                return;
+            }
+
+            // Générer le HTML pour chaque trajet
+            container.innerHTML = trajets.map(trajet => {
+                const departDate = new Date(trajet.date_depart);
+                const arriveeDate = new Date(trajet.date_arriver);
+                const vehicule = trajet.vehicule || {};
+                const ecoLabel = vehicule.energie === 'electrique' ? '<span class="eco-label">🌱 Écologique</span>' : '';
                 
                 return `
-                    <div class="ride-info" data-ride-id="${trajet.id}">
-                        <div class="ride-time">
-                            <div class="departure-time">${departDate}</div>
-                            <div class="duration">${duration}</div>
+                    <div class="ride-info" data-depart="${trajet.depart}" data-arrivee="${trajet.arrivee}">
+                        <div class="ride-header">
+                            <h3>${trajet.depart} → ${trajet.arrivee}</h3>
+                            <div class="ride-price">${trajet.prix}€</div>
                         </div>
-                        <img src="${trajet.conducteur_photo || 'assets/default-avatar.svg'}" 
-                             alt="${trajet.conducteur_nom}" 
-                             class="ride-avatar"
-                             onerror="this.src='assets/default-avatar.svg'">
+                        
                         <div class="ride-details">
-                            <strong>${trajet.conducteur_nom} ${trajet.conducteur_prenom}</strong>
-                            <span>★ ${trajet.note_moyenne ? trajet.note_moyenne.toFixed(1) : '4.0'}</span><br>
-                            <span>${trajet.nb_places} place(s) restantes</span>
-                            ${isEcologique ? '<span class="eco-label">Ecologique</span>' : ''}
-                            <br>
-                            <span class="route">${trajet.depart} → ${trajet.arrivee}</span><br>
-                            <span class="price">${trajet.tarif} €</span>
-                            <span class="vehicle">${trajet.marque} ${trajet.modele}</span>
+                            <div class="ride-time">
+                                <strong>Départ:</strong> ${departDate.toLocaleDateString('fr-FR')} à ${departDate.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}
+                                <br><strong>Arrivée:</strong> ${arriveeDate.toLocaleDateString('fr-FR')} à ${arriveeDate.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}
+                            </div>
+                            
+                            <div class="ride-driver">
+                                <img src="${trajet.conducteur_photo || 'assets/default-avatar.png'}" alt="Photo conducteur" class="driver-photo">
+                                <div class="driver-info">
+                                    <strong>${trajet.conducteur_nom}</strong>
+                                    <div class="driver-rating">⭐ ${trajet.note_moyenne || '4.5'}/5</div>
+                                </div>
+                            </div>
+                            
+                            <div class="ride-vehicle">
+                                <strong>Véhicule:</strong> ${vehicule.marque || ''} ${vehicule.modele || ''} ${ecoLabel}
+                                <br><strong>Places disponibles:</strong> ${trajet.places_disponibles}
+                            </div>
+                            
+                            <div class="ride-duration">
+                                <strong>Durée:</strong> <span class="duree-api">Calcul...</span>
+                            </div>
                         </div>
+                        
                         <div class="ride-actions">
-                            <button class="btn-detail" onclick="showRideDetails(${trajet.id})">Détail</button>
-                            <button class="btn-participer" onclick="participateInRide(${trajet.id})">Participer</button>
+                            <button onclick="reserverTrajet(${trajet.id})" class="btn-reserver">
+                                Réserver ${trajet.prix}€
+                            </button>
+                            <button onclick="contactConducteur('${trajet.conducteur_nom}')" class="btn-contact">
+                                Contacter
+                            </button>
                         </div>
                     </div>
                 `;
             }).join('');
+
+            // Calculer les durées pour chaque trajet
+            document.querySelectorAll('.ride-info').forEach(function(card) {
+                const depart = card.getAttribute('data-depart');
+                const arrivee = card.getAttribute('data-arrivee');
+                const dureeSpan = card.querySelector('.duree-api');
+                if (depart && arrivee && dureeSpan && typeof getTrajetDuration !== 'undefined') {
+                    getTrajetDuration(depart, arrivee, function(duree) {
+                        dureeSpan.textContent = duree;
+                    });
+                }
+            });
         }
 
-        // Fonction de recherche
+        // Fonction de recherche mise à jour
         function searchRides() {
-            const depart = document.getElementById('depart').value.toLowerCase();
-            const destination = document.getElementById('destination').value.toLowerCase();
+            const depart = document.getElementById('depart').value.trim();
+            const destination = document.getElementById('destination').value.trim();
             const date = document.getElementById('date').value;
             const passagers = document.getElementById('passagers').value;
 
-            let filteredRides = sampleRides;
+            const filters = {};
+            if (depart) filters.depart = depart;
+            if (destination) filters.arrivee = destination;
+            if (date) filters.date = date;
+            if (passagers && passagers !== 'Passagers') filters.passagers = passagers;
 
-            // Filtrer par départ
-            if (depart.trim()) {
-                filteredRides = filteredRides.filter(ride => 
-                    ride.depart.toLowerCase().includes(depart)
-                );
-            }
-
-            // Filtrer par destination
-            if (destination.trim()) {
-                filteredRides = filteredRides.filter(ride => 
-                    ride.arrivee.toLowerCase().includes(destination)
-                );
-            }
-
-            // Filtrer par date
-            if (date) {
-                filteredRides = filteredRides.filter(ride => {
-                    const rideDate = new Date(ride.date_depart).toISOString().split('T')[0];
-                    return rideDate === date;
-                });
-            }
-
-            // Filtrer par nombre de passagers
-            if (passagers && passagers !== 'Passagers') {
-                const nbPassagers = passagers === '3+' ? 3 : parseInt(passagers);
-                filteredRides = filteredRides.filter(ride => 
-                    ride.nb_places >= nbPassagers
-                );
-            }
-
-            displayRides(filteredRides);
+            console.log('Recherche avec filtres:', filters);
+            loadRidesFromDatabase(filters);
         }
 
-        // Fonction pour afficher les détails d'un trajet
-        function showRideDetails(rideId) {
-            const ride = sampleRides.find(r => r.id === rideId);
-            if (ride) {
-                alert(`Détails du trajet:
-                
-Conducteur: ${ride.conducteur_nom} ${ride.conducteur_prenom}
-Véhicule: ${ride.marque} ${ride.modele} (${ride.energie})
-Trajet: ${ride.depart} → ${ride.arrivee}
-Départ: ${formatDate(ride.date_depart)}
-Durée: ${calculateDuration(ride.date_depart, ride.date_arriver)}
-Prix: ${ride.tarif}€
-Places disponibles: ${ride.nb_places}
-Note moyenne: ${ride.note_moyenne ? ride.note_moyenne.toFixed(1) : '4.0'}★`);
-            }
-        }
-
-        // Fonction pour participer à un trajet
-        function participateInRide(rideId) {
+        // Fonction pour réserver un trajet
+        function reserverTrajet(trajetId) {
             if (!auth.isLoggedIn()) {
-                alert('Vous devez être connecté pour participer à un trajet.');
+                alert('Vous devez être connecté pour réserver un trajet.');
                 window.location.href = 'login.html';
                 return;
             }
 
-            const ride = sampleRides.find(r => r.id === rideId);
-            if (ride && ride.nb_places > 0) {
-                const confirm = window.confirm(`Voulez-vous participer au trajet ${ride.depart} → ${ride.arrivee} pour ${ride.tarif}€ ?`);
-                if (confirm) {
-                    // Simuler la participation
-                    ride.nb_places--;
-                    displayRides();
-                    alert('Votre participation a été enregistrée !');
-                }
+            const currentUser = auth.getCurrentUser();
+            if (currentUser.role !== 'voyageur') {
+                alert('Seuls les voyageurs peuvent réserver des trajets.');
+                return;
+            }
+
+            const nbPlaces = prompt('Combien de places souhaitez-vous réserver ?', '1');
+            if (!nbPlaces || isNaN(nbPlaces) || nbPlaces < 1) {
+                alert('Nombre de places invalide.');
+                return;
+            }
+
+            const result = database.reserverPlace(trajetId, currentUser.id, parseInt(nbPlaces));
+            
+            if (result.success) {
+                alert(result.message);
+                loadRidesFromDatabase(); // Recharger les trajets
             } else {
-                alert('Désolé, ce trajet n\'a plus de places disponibles.');
+                alert(result.message);
             }
         }
 
-        // Mettre à jour la navbar selon l'état de connexion
-        function updateNavbar() {
-            const dropdown = document.getElementById('navbar-dropdown');
-            if (auth.isLoggedIn()) {
-                const user = auth.getCurrentUser();
-                dropdown.innerHTML = `
-                    <a href="${user.role === 'conducteur' ? 'comptecon' : 'comptevoyageur'}.html">Mon compte</a>
-                    <a href="#" onclick="handleLogout()">Déconnexion</a>
-                `;
-            }
+        // Fonction pour contacter un conducteur
+        function contactConducteur(conducteurNom) {
+            alert(`Fonctionnalité de messagerie à venir.\nVous pourrez bientôt contacter ${conducteurNom} directement depuis l'application.`);
         }
 
-        // Fonction de déconnexion
-        function handleLogout() {
-            auth.logout();
-            updateNavbar();
-            window.location.href = '../../index.html';
-        }
-
-        // Initialisation au chargement de la page
+        // Initialiser la page au chargement
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                // Appliquer les paramètres URL s'ils existent
-                const urlParams = getURLParams();
-                if (urlParams.depart) document.getElementById('depart').value = urlParams.depart;
-                if (urlParams.destination) document.getElementById('destination').value = urlParams.destination;
-                if (urlParams.date) document.getElementById('date').value = urlParams.date;
-                if (urlParams.passagers) document.getElementById('passagers').value = urlParams.passagers;
-                
-                // Afficher les trajets
-                displayRides();
-                
-                // Mettre à jour la navbar
-                setTimeout(() => {
-                    if (typeof auth !== 'undefined') {
-                        updateNavbar();
-                    }
-                }, 100);
-                
-                // Définir la date par défaut à aujourd'hui
-                if (!urlParams.date) {
-                    const today = new Date().toISOString().split('T')[0];
-                    document.getElementById('date').value = today;
-                }
-                
-                // Faire une recherche automatique si des paramètres sont présents
-                if (urlParams.depart || urlParams.destination || urlParams.date || urlParams.passagers) {
-                    searchRides();
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'initialisation:', error);
-                // Afficher les trajets par défaut même en cas d'erreur
-                displayRides();
+            // Remplir les champs avec les paramètres URL
+            const urlParams = getURLParams();
+            if (urlParams.depart) document.getElementById('depart').value = urlParams.depart;
+            if (urlParams.destination) document.getElementById('destination').value = urlParams.destination;
+            if (urlParams.date) document.getElementById('date').value = urlParams.date;
+            if (urlParams.passagers) document.getElementById('passagers').value = urlParams.passagers;
+
+            // Charger tous les trajets au démarrage
+            loadRidesFromDatabase();
+
+            // Mettre à jour la navbar selon l'état de connexion
+            if (typeof updateAuthUI === 'function') {
+                updateAuthUI();
             }
         });
     </script>

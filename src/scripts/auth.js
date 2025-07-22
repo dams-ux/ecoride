@@ -58,9 +58,29 @@ class AuthSystem {
         return { success: true, message: 'Inscription réussie ! Vous pouvez vous connecter.' };
     }
 
-    // Connexion
+    // Connexion avec base de données simulée
     login(email, password) {
         console.log(`Tentative de connexion pour: ${email}`);
+        
+        // Utiliser la base de données simulée si disponible
+        if (typeof database !== 'undefined') {
+            const result = database.authenticateUser(email, password);
+            if (result.success) {
+                this.currentUser = result.user;
+                this.saveData();
+                console.log('Connexion réussie avec base de données:', this.currentUser);
+                return { 
+                    success: true, 
+                    message: 'Connexion réussie !', 
+                    redirectUrl: result.user.role === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html'
+                };
+            } else {
+                console.log('Échec authentification base de données');
+                return { success: false, message: result.message || 'Email ou mot de passe incorrect.' };
+            }
+        }
+
+        // Fallback vers système localStorage si base de données non disponible
         const user = this.findUserByEmail(email);
         
         if (!user) {
@@ -152,32 +172,46 @@ class AuthSystem {
         return { success: true, message: 'Profil mis à jour avec succès.' };
     }
 
-    // Initialiser quelques utilisateurs de test (optionnel)
+    // Initialiser les utilisateurs de la base de données
     initTestUsers() {
         if (this.users.conducteurs.length === 0 && this.users.voyageurs.length === 0) {
-            console.log('Initialisation des utilisateurs de test...');
+            console.log('Initialisation des utilisateurs de la base de données...');
+            
+            // Utilisateurs réels de la base de données ecoride
+            // Table conducteurs
             this.users.conducteurs.push({
                 id: 1,
                 nom: 'Dupont',
-                prenom: 'Jean',
-                email: 'jean.dupont@test.com',
-                password: btoa('password123'),
-                photo: null,
-                dateCreation: new Date().toISOString()
+                prenom: 'Paul',
+                email: 'pauldupont@hotmail.fr',
+                password: btoa('Mavoiture6+'), // Mot de passe en clair pour le test
+                photo: '../uploads/687ce8683a623_photo utilisateur.png',
+                dateCreation: '2025-07-21'
             });
 
-            this.users.voyageurs.push({
+            this.users.conducteurs.push({
                 id: 2,
-                nom: 'Martin',
-                prenom: 'Marie',
-                email: 'marie.martin@test.com',
-                password: btoa('password123'),
-                photo: null,
-                dateCreation: new Date().toISOString()
+                nom: 'Rive',
+                prenom: 'Jean', 
+                email: 'jeanrive@hotmail.fr',
+                password: btoa('password123'), // Mot de passe simulé
+                photo: '../uploads/687cf2553ace9_photo utilisateur.png',
+                dateCreation: '2025-07-21'
+            });
+
+            // Table voyageurs
+            this.users.voyageurs.push({
+                id: 1,
+                nom: 'Pop',
+                prenom: 'Julie',
+                email: 'juliepop@hotmail.fr', 
+                password: btoa('Monvoyage6+'), // Mot de passe en clair pour le test
+                photo: 'assets/voyageur_1.png',
+                dateCreation: '2025-07-21'
             });
 
             this.saveData();
-            console.log('Utilisateurs de test créés:', this.users);
+            console.log('Utilisateurs de la base de données chargés:', this.users);
         }
     }
 

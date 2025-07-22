@@ -109,10 +109,12 @@
     <script>
         // Fonction de déconnexion
         function handleLogout() {
-            auth.logout();
-            updateAuthUI();
-            alert('Vous avez été déconnecté avec succès');
-            window.location.reload();
+            if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                auth.logout();
+                updateAuthUI();
+                alert('Déconnexion réussie !');
+                window.location.reload();
+            }
         }
 
         // Fonction de debug pour l'authentification
@@ -132,13 +134,13 @@
             
             if (dropdownContent) {
                 if (isLoggedIn && currentUser) {
-                    // Utilisateur connecté
+                    // Utilisateur connecté : remplacer par Mon compte et Déconnexion
                     dropdownContent.innerHTML = `
-                        <a href="${currentUser.role === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html'}">Mon compte</a>
-                        <button onclick="handleLogout()" style="background: none; border: none; cursor: pointer; text-align: left; width: 100%; padding: 8px 12px; font-size: 14px;">Déconnexion</button>
+                        <a href="${currentUser.role === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html'}">Mon compte (${currentUser.prenom})</a>
+                        <button onclick="handleLogout()" style="background: #f44336; color: white; border: none; cursor: pointer; text-align: left; width: 100%; padding: 8px 12px; font-size: 14px; border-radius: 4px;">🚪 Déconnexion</button>
                     `;
                 } else {
-                    // Utilisateur non connecté
+                    // Utilisateur non connecté : afficher Connexion et Inscription
                     dropdownContent.innerHTML = `
                         <a href="../pages/login.html">Connexion</a>
                         <a href="../pages/signup.html">Inscription</a>
