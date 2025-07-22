@@ -1,0 +1,115 @@
+
+
+
+body, html {
+    background: #f2efc6;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+ 
+}
+
+
+
+
+
+/* navbar */
+.navbar-ecoride {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #C6DDA8;
+    font-family: 'arial', sans-serif;
+    width: 100%;
+    
+}
+.navbar-left {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+}
+.navbar-logo {
+    height: 83px;
+}
+.navbar-center {
+    display: flex;
+    gap: 200px;
+    flex: 1 1 auto;
+    justify-content: center;
+}
+.navbar-btn {
+    background: #084229;
+    padding: 10px 10px;
+    color: #fff;
+    border-radius: 0px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 20px;
+    transition: background 0.2s;
+    box-shadow: 0 1px 4px #b6e2a1;
+}
+.navbar-btn:hover {
+    background: #C6DDA8;
+    color: black;
+}
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 250px;
+}
+.navbar-icon-user {
+    gap: 150px;
+    font-size: 1rem;
+    color: #4e944f;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+.navbar-energie {
+    height: 97px;
+    gap: 20px;
+}
+@media (max-width: 900px) {
+    .navbar-ecoride { flex-direction: column; gap: 10px; padding: 10px; }
+    .navbar-center { gap: 12px; }
+    .navbar-energie { height: 36px; }
+}
+
+
+/* Dropdown user menu */
+.dropdown-user {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background: #F2EFC6;
+    min-width: 170px;
+    box-shadow: 0 2px 8px #C6DDA8;
+    z-index: 10;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+.dropdown-content a {
+    color: #ffffff;
+    padding: 12px 18px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.08em;
+    transition: background 0.2s;
+}
+.dropdown-content a:hover {
+    background: #111f0a;
+}
+
+.dropdown-user.open .dropdown-content {
+    display: block;
+}
+
+

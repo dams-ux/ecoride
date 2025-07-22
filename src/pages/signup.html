@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Ecoride</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar-ecoride">
+        <div class="navbar-left">
+            <img src="assets/image voiture.png" alt="image voiture" class="navbar-logo">
+        </div>
+        <div class="navbar-center">
+            <a href="../../index.html" class="navbar-btn">Accueil</a>
+            <a href="covoiturage.html" class="navbar-btn">Covoiturage</a>
+            <a href="#" class="navbar-btn">Contact</a>
+        </div>
+        <div class="navbar-right" style="position:relative;">
+            <div class="dropdown-user">
+                <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                    <img src="assets/Icon.png" alt="Utilisateur" style="height:32px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle; margin-left:3px;">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content">
+                    <a href="login.html">Connexion</a>
+                    <a href="signup.html">Inscription</a>
+                </div>
+            </div>
+            <img src="assets/image energie.png" alt="Energie" class="navbar-energie">
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Créer un compte</h1>
+        </header>
+
+        <div id="signup-message" style="display:none; padding:10px; margin:10px 0; border-radius:5px;"></div>
+
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="nom">Nom :</label>
+                <input type="text" id="nom" name="nom" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="prenom">Prénom :</label>
+                <input type="text" id="prenom" name="prenom" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email :</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Mot de passe :</label>
+                <input type="password" id="password" name="password" required>
+                <div class="password-info">
+                    Le mot de passe doit contenir au moins 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 symbole.
+                </div>
+                <div class="generator-row">
+                    <button type="button" onclick="generatePassword()" title="Générer un mot de passe">
+                        &#8635; Générateur de mot de passe
+                    </button>
+                    <input type="text" id="generated-password" readonly placeholder="Mot de passe généré" onclick="copyPassword()">
+                </div>
+                <div id="password-error" style="color:#ff5555; font-size:0.95em; margin-top:4px;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password">Confirmation mot de passe :</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="role">Je suis :</label>
+                <select id="role" name="role" required>
+                    <option value="">Choisir un rôle</option>
+                    <option value="voyageur">Voyageur</option>
+                    <option value="conducteur">Conducteur</option>
+                </select>
+            </div>
+            
+            <button type="submit">Valider</button>
+        </form>
+        
+        <p>Déjà un compte ? <a href="login.html">Connectez-vous ici</a>.</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../scripts/auth.js"></script>
+    <script>
+        // Générateur de mot de passe
+        function generatePassword() {
+            const length = 12;
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let password = "";
+            
+            // Assurer qu'il y a au moins un caractère de chaque type
+            const minuscules = "abcdefghijklmnopqrstuvwxyz";
+            const majuscules = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const chiffres = "0123456789";
+            const symboles = "!@#$%^&*";
+            
+            password += minuscules[Math.floor(Math.random() * minuscules.length)];
+            password += majuscules[Math.floor(Math.random() * majuscules.length)];
+            password += chiffres[Math.floor(Math.random() * chiffres.length)];
+            password += symboles[Math.floor(Math.random() * symboles.length)];
+            
+            // Remplir le reste
+            for (let i = 4; i < length; i++) {
+                password += charset[Math.floor(Math.random() * charset.length)];
+            }
+            
+            // Mélanger le mot de passe
+            password = password.split('').sort(() => Math.random() - 0.5).join('');
+            
+            document.getElementById('generated-password').value = password;
+        }
+
+        // Copier le mot de passe généré
+        function copyPassword() {
+            const generatedPassword = document.getElementById('generated-password');
+            const passwordField = document.getElementById('password');
+            
+            if (generatedPassword.value) {
+                passwordField.value = generatedPassword.value;
+                navigator.clipboard.writeText(generatedPassword.value);
+                
+                // Feedback visuel
+                const originalPlaceholder = generatedPassword.placeholder;
+                generatedPassword.placeholder = "Copié !";
+                setTimeout(() => {
+                    generatedPassword.placeholder = originalPlaceholder;
+                }, 1000);
+            }
+        }
+
+        // Vérification de la force du mot de passe
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const errorDiv = document.getElementById('password-error');
+            
+            // Vérifier les critères
+            const hasMinLength = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            const passwordsMatch = password === confirmPassword;
+            
+            let errors = [];
+            
+            if (!hasMinLength) errors.push("au moins 8 caractères");
+            if (!hasUppercase) errors.push("une majuscule");
+            if (!hasLowercase) errors.push("une minuscule");
+            if (!hasNumber) errors.push("un chiffre");
+            if (!hasSymbol) errors.push("un symbole");
+            if (!passwordsMatch) errors.push("les mots de passe doivent être identiques");
+            
+            if (errors.length > 0) {
+                errorDiv.textContent = "Le mot de passe doit contenir : " + errors.join(", ");
+                return false;
+            }
+            
+            errorDiv.textContent = "";
+            return true;
+        }
+
+        // Gestion du formulaire d'inscription
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!checkPasswordStrength()) {
+                return;
+            }
+            
+            const formData = new FormData(this);
+            const userData = {
+                nom: formData.get('nom'),
+                prenom: formData.get('prenom'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                role: formData.get('role')
+            };
+            
+            const result = auth.signup(userData);
+            const messageDiv = document.getElementById('signup-message');
+            
+            // Afficher le message
+            messageDiv.style.display = 'block';
+            messageDiv.textContent = result.message;
+            messageDiv.style.backgroundColor = result.success ? '#d4edda' : '#f8d7da';
+            messageDiv.style.color = result.success ? '#155724' : '#721c24';
+            messageDiv.style.border = result.success ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+            
+            if (result.success) {
+                // Réinitialiser le formulaire
+                this.reset();
+                
+                // Rediriger vers la page de connexion après 2 secondes
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            }
+        });
+
+        // Vérifier la force du mot de passe en temps réel
+        document.getElementById('password').addEventListener('input', function() {
+            const confirmPassword = document.getElementById('confirm_password');
+            if (confirmPassword.value) {
+                checkPasswordStrength();
+            }
+        });
+
+        document.getElementById('confirm_password').addEventListener('input', checkPasswordStrength);
+
+        // Vérifier si l'utilisateur est déjà connecté
+        document.addEventListener('DOMContentLoaded', function() {
+            if (auth.isLoggedIn()) {
+                const currentUser = auth.getCurrentUser();
+                const redirectUrl = currentUser.role === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html';
+                window.location.href = redirectUrl;
+            }
+        });
+    </script>
+</body>
+</html>

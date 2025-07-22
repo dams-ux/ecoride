@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Compte Voyageur - ECORIDE</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+    <link rel="stylesheet" href="../styles/voyageur.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar-ecoride">
+        <div class="navbar-left">
+            <img src="assets/image voiture.png" alt="image voiture" class="navbar-logo">
+        </div>
+        <div class="navbar-center">
+            <a href="../../index.html" class="navbar-btn">Accueil</a>
+            <a href="covoiturage.html" class="navbar-btn">Covoiturage</a>
+            <a href="#" class="navbar-btn">Contact</a>
+        </div>
+        <div class="navbar-right" style="position:relative;">
+            <div class="dropdown-user">
+                <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                    <img src="assets/Icon.png" alt="Utilisateur" style="height:32px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle; margin-left:3px;">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content">
+                    <a href="comptevoyageur.html">Mon compte</a>
+                    <button onclick="handleLogout()" style="background: none; border: none; cursor: pointer; text-align: left; width: 100%;">Déconnexion</button>
+                </div>
+            </div>
+            <img src="assets/image energie.png" alt="Energie" class="navbar-energie">
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Bienvenue <span id="user-name"></span></h1>
+            <div class="user-photo">
+                <img id="user-photo" src="assets/default-avatar.svg" alt="Photo de profil" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                <button onclick="uploadPhoto()">📷 Changer la photo</button>
+                <input type="file" id="photo-input" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'reservations-tab')">Mes Réservations</button>
+            <button class="tab-button" onclick="openTab(event, 'historique-tab')">Historique</button>
+            <button class="tab-button" onclick="openTab(event, 'profil-tab')">Mon Profil</button>
+        </div>
+
+        <!-- Onglet Réservations -->
+        <div id="reservations-tab" class="tab-content active">
+            <h2>Mes Réservations</h2>
+            <div id="message"></div>
+            
+            <div class="reservations-list" id="reservations-list">
+                <!-- Les réservations seront affichées ici -->
+            </div>
+        </div>
+
+        <!-- Onglet Historique -->
+        <div id="historique-tab" class="tab-content">
+            <h2>Historique des Trajets</h2>
+            
+            <div class="historique-list" id="historique-list">
+                <!-- L'historique sera affiché ici -->
+            </div>
+        </div>
+
+        <!-- Onglet Profil -->
+        <div id="profil-tab" class="tab-content">
+            <h2>Mon Profil</h2>
+            <form id="profil-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="profil-nom">Nom:</label>
+                        <input type="text" id="profil-nom" name="nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profil-prenom">Prénom:</label>
+                        <input type="text" id="profil-prenom" name="prenom" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="profil-email">Email:</label>
+                    <input type="email" id="profil-email" name="email" required>
+                </div>
+                <button type="submit">Mettre à jour le profil</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer-ecoride">
+        <p>Mentions Légales</p>
+        <p>ecoridenature@hotmail.fr</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../scripts/auth.js"></script>
+    <script>
+        // Vérifier si l'utilisateur est connecté et est un voyageur
+        if (!auth.isLoggedIn() || auth.getCurrentUser().role !== 'voyageur') {
+            window.location.href = 'login.html';
+        }
+
+        const currentUser = auth.getCurrentUser();
+
+        // Système de gestion des réservations voyageur
+        class VoyageurDataManager {
+            constructor(userId) {
+                this.userId = userId;
+                this.reservations = JSON.parse(localStorage.getItem(`reservations_${userId}`)) || [];
+                this.historique = JSON.parse(localStorage.getItem(`historique_${userId}`)) || [];
+                this.initSampleData();
+            }
+
+            // Initialiser quelques données d'exemple
+            initSampleData() {
+                if (this.reservations.length === 0) {
+                    this.reservations = [
+                        {
+                            id: 1,
+                            trajetId: 1,
+                            depart: 'Paris',
+                            arrivee: 'Lyon',
+                            date_depart: '2025-07-22 08:00:00',
+                            conducteur: 'Jean Dupont',
+                            tarif: 45,
+                            statut: 'confirmée',
+                            places_reservees: 1
+                        },
+                        {
+                            id: 2,
+                            trajetId: 3,
+                            depart: 'Toulouse',
+                            arrivee: 'Bordeaux',
+                            date_depart: '2025-07-24 09:30:00',
+                            conducteur: 'Maria Garcia',
+                            tarif: 35,
+                            statut: 'en_attente',
+                            places_reservees: 2
+                        }
+                    ];
+                    this.saveReservations();
+                }
+
+                if (this.historique.length === 0) {
+                    this.historique = [
+                        {
+                            id: 1,
+                            depart: 'Nice',
+                            arrivee: 'Cannes',
+                            date_trajet: '2025-07-15 14:00:00',
+                            conducteur: 'Sophie Martin',
+                            tarif: 15,
+                            note_donnee: 5,
+                            commentaire: 'Excellent trajet, conductrice très sympathique !'
+                        },
+                        {
+                            id: 2,
+                            depart: 'Marseille',
+                            arrivee: 'Aix-en-Provence',
+                            date_trajet: '2025-07-10 18:30:00',
+                            conducteur: 'Pierre Durand',
+                            tarif: 12,
+                            note_donnee: 4,
+                            commentaire: 'Trajet ponctuel, véhicule propre.'
+                        }
+                    ];
+                    this.saveHistorique();
+                }
+            }
+
+            saveReservations() {
+                localStorage.setItem(`reservations_${this.userId}`, JSON.stringify(this.reservations));
+            }
+
+            saveHistorique() {
+                localStorage.setItem(`historique_${this.userId}`, JSON.stringify(this.historique));
+            }
+
+            cancelReservation(reservationId) {
+                this.reservations = this.reservations.filter(r => r.id !== reservationId);
+                this.saveReservations();
+                return { success: true, message: 'Réservation annulée avec succès.' };
+            }
+
+            addReservation(reservation) {
+                reservation.id = Date.now();
+                reservation.statut = 'confirmée';
+                this.reservations.push(reservation);
+                this.saveReservations();
+                return { success: true, message: 'Réservation effectuée avec succès.' };
+            }
+
+            rateTrip(historiqueId, note, commentaire) {
+                const trip = this.historique.find(h => h.id === historiqueId);
+                if (trip) {
+                    trip.note_donnee = note;
+                    trip.commentaire = commentaire;
+                    this.saveHistorique();
+                    return { success: true, message: 'Note et commentaire enregistrés.' };
+                }
+                return { success: false, message: 'Trajet non trouvé.' };
+            }
+        }
+
+        const voyageurDataManager = new VoyageurDataManager(currentUser.id);
+
+        // Fonction pour afficher les messages
+        function showMessage(message, isSuccess = true) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            messageDiv.style.backgroundColor = isSuccess ? '#d4edda' : '#f8d7da';
+            messageDiv.style.color = isSuccess ? '#155724' : '#721c24';
+            messageDiv.style.border = isSuccess ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+            messageDiv.style.padding = '10px';
+            messageDiv.style.borderRadius = '5px';
+            messageDiv.style.marginBottom = '20px';
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Gestion des onglets
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tab-content");
+            for (const element of tabcontent) {
+                element.classList.remove("active");
+            }
+            
+            const tablinks = document.getElementsByClassName("tab-button");
+            for (const element of tablinks) {
+                element.classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Affichage des réservations
+        function displayReservations() {
+            const container = document.getElementById('reservations-list');
+            
+            if (voyageurDataManager.reservations.length === 0) {
+                container.innerHTML = '<p>Aucune réservation active.</p>';
+                return;
+            }
+
+            container.innerHTML = voyageurDataManager.reservations.map(reservation => {
+                const departDate = new Date(reservation.date_depart).toLocaleString('fr-FR');
+                let statutClass;
+                if (reservation.statut === 'confirmée') {
+                    statutClass = 'statut-confirmee';
+                } else if (reservation.statut === 'en_attente') {
+                    statutClass = 'statut-attente';
+                } else {
+                    statutClass = 'statut-annulee';
+                }
+                
+                return `
+                    <div class="reservation-card">
+                        <div class="reservation-header">
+                            <h3>${reservation.depart} → ${reservation.arrivee}</h3>
+                            <span class="statut ${statutClass}">${reservation.statut.replace('_', ' ')}</span>
+                        </div>
+                        <p><strong>Conducteur:</strong> ${reservation.conducteur}</p>
+                        <p><strong>Date de départ:</strong> ${departDate}</p>
+                        <p><strong>Places réservées:</strong> ${reservation.places_reservees}</p>
+                        <p><strong>Prix total:</strong> ${reservation.tarif * reservation.places_reservees}€</p>
+                        <div class="reservation-actions">
+                            <button onclick="cancelReservation(${reservation.id})" class="btn-cancel">Annuler</button>
+                            <button onclick="contactDriver('${reservation.conducteur}')" class="btn-contact">Contacter</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Affichage de l'historique
+        function displayHistorique() {
+            const container = document.getElementById('historique-list');
+            
+            if (voyageurDataManager.historique.length === 0) {
+                container.innerHTML = '<p>Aucun trajet dans l\'historique.</p>';
+                return;
+            }
+
+            container.innerHTML = voyageurDataManager.historique.map(trajet => {
+                const trajetDate = new Date(trajet.date_trajet).toLocaleString('fr-FR');
+                const stars = '★'.repeat(trajet.note_donnee) + '☆'.repeat(5 - trajet.note_donnee);
+                
+                return `
+                    <div class="historique-card">
+                        <h3>${trajet.depart} → ${trajet.arrivee}</h3>
+                        <p><strong>Conducteur:</strong> ${trajet.conducteur}</p>
+                        <p><strong>Date:</strong> ${trajetDate}</p>
+                        <p><strong>Prix payé:</strong> ${trajet.tarif}€</p>
+                        <div class="rating">
+                            <strong>Votre note:</strong> <span class="stars">${stars}</span> (${trajet.note_donnee}/5)
+                        </div>
+                        <div class="commentaire">
+                            <strong>Votre commentaire:</strong>
+                            <p class="comment-text">${trajet.commentaire || 'Aucun commentaire'}</p>
+                        </div>
+                        <button onclick="editRating(${trajet.id})" class="btn-edit-rating">Modifier l'avis</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Annuler une réservation
+        function cancelReservation(reservationId) {
+            if (confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
+                const result = voyageurDataManager.cancelReservation(reservationId);
+                showMessage(result.message, result.success);
+                if (result.success) {
+                    displayReservations();
+                }
+            }
+        }
+
+        // Contacter le conducteur (simulation)
+        function contactDriver(conducteurNom) {
+            alert(`Fonctionnalité de messagerie à venir.\nVous pourrez bientôt contacter ${conducteurNom} directement depuis l'application.`);
+        }
+
+        // Modifier la note et le commentaire
+        function editRating(trajetId) {
+            const trajet = voyageurDataManager.historique.find(h => h.id === trajetId);
+            if (!trajet) return;
+
+            const note = prompt(`Nouvelle note pour le trajet ${trajet.depart} → ${trajet.arrivee} (1-5):`, trajet.note_donnee);
+            if (note === null) return;
+
+            const noteNum = parseInt(note);
+            if (isNaN(noteNum) || noteNum < 1 || noteNum > 5) {
+                alert('Veuillez entrer une note entre 1 et 5.');
+                return;
+            }
+
+            const commentaire = prompt('Nouveau commentaire (optionnel):', trajet.commentaire || '');
+            if (commentaire === null) return;
+
+            const result = voyageurDataManager.rateTrip(trajetId, noteNum, commentaire);
+            showMessage(result.message, result.success);
+            if (result.success) {
+                displayHistorique();
+            }
+        }
+
+        // Gestion de l'upload de photo
+        function uploadPhoto() {
+            document.getElementById('photo-input').click();
+        }
+
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const photoData = e.target.result;
+                    document.getElementById('user-photo').src = photoData;
+                    
+                    // Sauvegarder la photo dans le profil utilisateur
+                    const updatedUser = { ...currentUser, photo: photoData };
+                    auth.currentUser = updatedUser;
+                    auth.saveData();
+                    
+                    showMessage('Photo de profil mise à jour avec succès.');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Déconnexion
+        function handleLogout() {
+            auth.logout();
+            window.location.href = '../../index.html';
+        }
+
+        // Gestion du formulaire profil
+        document.getElementById('profil-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const profileData = {
+                nom: formData.get('nom'),
+                prenom: formData.get('prenom'),
+                email: formData.get('email')
+            };
+            
+            const result = auth.updateProfile(profileData);
+            showMessage(result.message, result.success);
+            
+            if (result.success) {
+                document.getElementById('user-name').textContent = `${profileData.prenom} ${profileData.nom}`;
+            }
+        });
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Afficher les informations utilisateur
+            document.getElementById('user-name').textContent = `${currentUser.prenom} ${currentUser.nom}`;
+            document.getElementById('profil-nom').value = currentUser.nom;
+            document.getElementById('profil-prenom').value = currentUser.prenom;
+            document.getElementById('profil-email').value = currentUser.email;
+            
+            if (currentUser.photo) {
+                document.getElementById('user-photo').src = currentUser.photo;
+            }
+            
+            // Afficher les données
+            displayReservations();
+            displayHistorique();
+        });
+    </script>
+
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .user-photo {
+            margin: 20px 0;
+        }
+
+        .user-photo button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-button.active {
+            border-bottom-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .reservation-card,
+        .historique-card {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .reservation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .statut {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .statut-confirmee {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .statut-attente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .statut-annulee {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .reservation-actions {
+            margin-top: 15px;
+        }
+
+        .btn-cancel {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .btn-contact,
+        .btn-edit-rating {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .rating {
+            margin: 10px 0;
+        }
+
+        .stars {
+            color: #ffd700;
+            font-size: 18px;
+        }
+
+        .commentaire {
+            margin: 10px 0;
+        }
+
+        .comment-text {
+            font-style: italic;
+            background: #f0f0f0;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        button[type="submit"] {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button[type="submit"]:hover {
+            background: #45a049;
+        }
+    </style>
+</body>
+</html>

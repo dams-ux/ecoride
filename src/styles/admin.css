@@ -1,0 +1,17 @@
+.admin-main {
+    max-width: 900px;
+    margin: 30px auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+}
+.admin-section {
+    margin-bottom: 32px;
+}
+.admin-section h2 {
+    margin-bottom: 12px;
+}
+#employe-list > div {
+    padding: 6px 0;
+    border-bottom: 1px solid #e3f3d2;
+}

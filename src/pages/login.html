@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Page de connexion pour ECORIDE, une plateforme de covoiturage écoresponsable.">
+    <meta charset="UTF-8">
+    <title>Connexion - ECORIDE</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar-ecoride">
+        <div class="navbar-left">
+            <img src="assets/image voiture.png" alt="image voiture" class="navbar-logo">
+        </div>
+        <div class="navbar-center">
+            <a href="../../index.html" class="navbar-btn">Accueil</a>
+            <a href="covoiturage.html" class="navbar-btn">Covoiturage</a>
+            <a href="#" class="navbar-btn">Contact</a>
+        </div>
+        <div class="navbar-right" style="position:relative;">
+            <div class="dropdown-user">
+                <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                    <img src="assets/Icon.png" alt="Utilisateur" style="height:32px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle; margin-left:3px;">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content">
+                    <a href="login.html">Connexion</a>
+                    <a href="signup.html">Inscription</a>
+                </div>
+            </div>
+            <img src="assets/image energie.png" alt="Energie" class="navbar-energie">
+        </div>
+    </nav>
+
+    <div class="login-container">
+        <h2>Connexion</h2>
+        <div id="login-message" style="display:none; padding:10px; margin:10px 0; border-radius:5px;"></div>
+        <form id="login-form">
+            <label for="email">Email :</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit">Se connecter</button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 20px;">
+            Pas encore de compte ? <a href="signup.html">Inscrivez-vous</a>
+        </p>
+        
+        <!-- Informations de test (à supprimer en production) -->
+        <div style="margin-top: 30px; padding: 10px; background: #f0f0f0; border-radius: 5px; font-size: 12px;">
+            <strong>Comptes de test :</strong><br>
+            Conducteur : jean.dupont@test.com / password123<br>
+            Voyageur : marie.martin@test.com / password123<br><br>
+            <button type="button" onclick="autoLogin('conducteur')" style="margin-right: 10px;">Connexion auto conducteur</button>
+            <button type="button" onclick="autoLogin('voyageur')">Connexion auto voyageur</button><br><br>
+            <button type="button" onclick="debugAuth()">Debug Auth</button>
+            <button type="button" onclick="clearData()">Effacer données</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../scripts/auth.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('login-message');
+            
+            const result = auth.login(email, password);
+            
+            // Afficher le message
+            messageDiv.style.display = 'block';
+            messageDiv.textContent = result.message;
+            messageDiv.style.backgroundColor = result.success ? '#d4edda' : '#f8d7da';
+            messageDiv.style.color = result.success ? '#155724' : '#721c24';
+            messageDiv.style.border = result.success ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+            
+            if (result.success) {
+                // Rediriger après 1 seconde
+                setTimeout(() => {
+                    window.location.href = result.redirectUrl;
+                }, 1000);
+            }
+        });
+
+        // Vérifier si l'utilisateur est déjà connecté
+        document.addEventListener('DOMContentLoaded', function() {
+            if (auth.isLoggedIn()) {
+                const currentUser = auth.getCurrentUser();
+                const redirectUrl = currentUser.role === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html';
+                window.location.href = redirectUrl;
+            }
+        });
+
+        // Fonctions de test et debug
+        function autoLogin(role) {
+            const email = role === 'conducteur' ? 'jean.dupont@test.com' : 'marie.martin@test.com';
+            const result = auth.login(email, 'password123');
+            
+            console.log('Résultat connexion auto:', result);
+            
+            if (result.success) {
+                window.location.href = result.redirectUrl;
+            } else {
+                alert('Erreur connexion auto: ' + result.message);
+            }
+        }
+
+        function debugAuth() {
+            auth.debugShowData();
+            alert('Consultez la console pour voir les données d\'authentification');
+        }
+
+        function clearData() {
+            if (confirm('Effacer toutes les données ? (utilisateurs, connexions, véhicules, trajets)')) {
+                localStorage.clear();
+                alert('Données effacées. Rechargez la page.');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

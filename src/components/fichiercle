@@ -1,0 +1,27 @@
+
+// clee API 
+
+// eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjFjZTZhMDY2YmFkNjQ0MmU5MDdlZTVhOWI0MzVkMzE4IiwiaCI6Im11cm11cjY0In0=
+
+
+
+
+// const bcrypt = require('bcrypt');
+// bcrypt.hash('ecoride2025', 10).then(console.log);
+
+
+// code hash: de ecoride2025
+// // Hash pour l'admin :
+// $2b$10$fEo8wwcjneHpWsGK9xXX7ubLbcpbahR5BG9xjnrpcDklJCpVtK5qC
+
+
+//Employer
+// robert@ecoride.fr   MDP : voiture
+
+
+//conducteur //dupont paul pauldupont@hotmail.fr
+//mdp:Mavoiture6+
+
+//voyageur
+//pop julie juliepop@hotmail.fr
+//Mdp : Monvoyage6+

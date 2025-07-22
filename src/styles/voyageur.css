@@ -1,0 +1,265 @@
+/* =======================
+   RESET & STRUCTURE GLOBALE
+   ======================= */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #fffbe6;
+}
+
+.main-content {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 40px;
+    margin: 0 0 30px 0;
+}
+
+/* =======================
+   BARRE DE RECHERCHE
+   ======================= */
+.search-bar-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: #e6f2d9;
+    padding: 18px 0 10px 0;
+}
+.search-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.search-input {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #b6e2a1;
+    font-size: 1em;
+}
+.search-btn {
+    background: #205c2c;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 22px;
+    font-size: 1em;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+.search-btn:hover {
+    background: #388e3c;
+}
+
+/* =======================
+   IDENTITE VOYAGEUR
+   ======================= */
+.voyageur-identite-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    margin-top: 40px;
+    margin-bottom: 32px;
+}
+.voyageur-avis-col {
+    min-width: 260px;
+    max-width: 320px;
+}
+.avis-card {
+    background: #e6f2d9;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #b6e2a1;
+    padding: 20px 24px;
+}
+.avis-card h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: #205c2c;
+    font-size: 1.1em;
+}
+.avis-item {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #b6e2a1;
+}
+.avis-user {
+    font-weight: bold;
+    color: #205c2c;
+}
+.avis-note {
+    color: #f7b801;
+    font-size: 1.1em;
+}
+.avis-comment {
+    font-size: 0.97em;
+    color: #333;
+}
+
+.voyageur-identite-card {
+    background: #fffbe6;
+    border-radius: 12px;
+    box-shadow: 0 0 0 2px #205c2c;
+    padding: 28px 38px;
+    min-width: 320px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #205c2c;
+}
+.voyageur-identite-infos {
+    margin-bottom: 18px;
+    text-align: center;
+}
+.voyageur-identite-nom,
+.voyageur-identite-prenom {
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 4px;
+}
+.voyageur-identite-photo-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.voyageur-photo {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #205c2c;
+    margin-bottom: 8px;
+    background: #fff;
+}
+.photo-upload-icon {
+    width: 28px;
+    height: 28px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    cursor: pointer;
+}
+.btn-enregistrer-photo {
+    background: #205c2c;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 18px;
+    font-size: 1em;
+    font-weight: bold;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-enregistrer-photo:hover {
+    background: #388e3c;
+}
+.voyageur-photo-label {
+    font-size: 0.95em;
+    color: #205c2c;
+    margin-top: 6px;
+}
+
+/* =======================
+   TRAJETS FUTURS
+   ======================= */
+.voyageur-trajets-futurs {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+.trajets-card {
+    background: #e6f2d9;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #b6e2a1;
+    padding: 22px 32px;
+    min-width: 320px;
+    max-width: 500px;
+    width: 100%;
+}
+.trajets-card h3 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    color: #205c2c;
+    font-size: 1.1em;
+}
+.trajet-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #b6e2a1;
+    font-size: 1em;
+}
+.trajet-item:last-child {
+    border-bottom: none;
+}
+.trajet-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.trajet-date {
+    font-weight: bold;
+    color: #205c2c;
+}
+.trajet-ville {
+    color: #333;
+}
+.trajet-statut {
+    color: #388e3c;
+    font-weight: bold;
+}
+.trajet-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.btn-annuler-trajet {
+    background: #03301b;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 1em;
+    font-weight: bold;
+    margin-left: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px #e2b6a1;
+    transition: background 0.2s;
+}
+.btn-annuler-trajet:hover {
+    background: #e6d9d9;
+    color: #b71c1c;
+}
+.trajet-vide {
+    color: #888;
+    text-align: center;
+    width: 100%;
+}
+
+/* =======================
+   FOOTER
+   ======================= */
+.footer-ecoride {
+    background: #c8e6b5;
+    padding: 18px 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    position: relative;
+    left: 0;
+    flex-shrink: 0;
+}
