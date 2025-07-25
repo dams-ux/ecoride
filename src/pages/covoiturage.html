@@ -230,6 +230,50 @@
             alert(`Fonctionnalité de messagerie à venir.\nVous pourrez bientôt contacter ${conducteurNom} directement depuis l'application.`);
         }
 
+        // Gestion du menu déroulant
+        function toggleDropdown() {
+            const dropdown = document.querySelector('.dropdown-user');
+            dropdown.classList.toggle('open');
+        }
+
+        // Fermer le menu si on clique ailleurs
+        function closeDropdown(event) {
+            const dropdown = document.querySelector('.dropdown-user');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('open');
+            }
+        }
+
+        // Fonction de déconnexion
+        function handleLogout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                auth.logout();
+                window.location.href = '../../index.html';
+            }
+        }
+
+        // Mettre à jour l'interface utilisateur selon l'état de connexion
+        function updateAuthUI() {
+            const dropdownContent = document.querySelector('#navbar-dropdown');
+            if (auth && auth.isLoggedIn()) {
+                const currentUser = auth.getCurrentUser();
+                const userRole = currentUser.role;
+                const accountPage = userRole === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html';
+                
+                // Utilisateur connecté : afficher Mon compte et Déconnexion
+                dropdownContent.innerHTML = `
+                    <a href="${accountPage}">Mon compte (${currentUser.prenom})</a>
+                    <button onclick="handleLogout()" style="background: none; border: none; color: inherit; cursor: pointer; text-align: left; width: 100%;">Déconnexion</button>
+                `;
+            } else {
+                // Utilisateur non connecté : afficher Connexion et Inscription
+                dropdownContent.innerHTML = `
+                    <a href="login.html">Connexion</a>
+                    <a href="signup.html">Inscription</a>
+                `;
+            }
+        }
+
         // Initialiser la page au chargement
         document.addEventListener('DOMContentLoaded', function() {
             // Remplir les champs avec les paramètres URL
@@ -239,13 +283,20 @@
             if (urlParams.date) document.getElementById('date').value = urlParams.date;
             if (urlParams.passagers) document.getElementById('passagers').value = urlParams.passagers;
 
+            // Ajouter l'événement de clic pour le menu déroulant
+            const userIcon = document.querySelector('.navbar-icon-user');
+            if (userIcon) {
+                userIcon.addEventListener('click', toggleDropdown);
+            }
+
+            // Fermer le menu si on clique ailleurs
+            document.addEventListener('click', closeDropdown);
+
             // Charger tous les trajets au démarrage
             loadRidesFromDatabase();
 
             // Mettre à jour la navbar selon l'état de connexion
-            if (typeof updateAuthUI === 'function') {
-                updateAuthUI();
-            }
+            updateAuthUI();
         });
     </script>
 </body>

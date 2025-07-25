@@ -362,6 +362,32 @@
             }
         }
 
+        // Gestion du menu déroulant
+        function toggleDropdown() {
+            const dropdown = document.querySelector('.dropdown-user');
+            dropdown.classList.toggle('open');
+        }
+
+        // Fermer le menu si on clique ailleurs
+        function closeDropdown(event) {
+            const dropdown = document.querySelector('.dropdown-user');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('open');
+            }
+        }
+
+        // Ajouter les event listeners au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ajouter l'événement de clic pour le menu déroulant
+            const userIcon = document.querySelector('.navbar-icon-user');
+            if (userIcon) {
+                userIcon.addEventListener('click', toggleDropdown);
+            }
+
+            // Fermer le menu si on clique ailleurs
+            document.addEventListener('click', closeDropdown);
+        });
+
         // Vérifier si l'utilisateur est déjà connecté
         if (auth && auth.isLoggedIn()) {
             const currentUser = auth.getCurrentUser();
