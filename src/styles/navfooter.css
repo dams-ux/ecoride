@@ -95,7 +95,7 @@ body, html {
     margin-top: 8px;
 }
 .dropdown-content a {
-    color: #ffffff;
+    color: #084229;
     padding: 12px 18px;
     text-decoration: none;
     display: flex;
@@ -104,8 +104,28 @@ body, html {
     font-size: 1.08em;
     transition: background 0.2s;
 }
-.dropdown-content a:hover {
-    background: #111f0a;
+
+.dropdown-content button {
+    color: #084229;
+    padding: 12px 18px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.08em;
+    transition: background 0.2s;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.dropdown-content a:hover,
+.dropdown-content button:hover {
+    background: #084229;
+    color: white;
 }
 
 .dropdown-user.open .dropdown-content {

@@ -234,6 +234,15 @@
                 loadTrajets();
                 loadReservations();
                 setupEventListeners();
+                
+                // Ajouter l'événement de clic pour le menu déroulant
+                const userIcon = document.querySelector('.navbar-icon-user');
+                if (userIcon) {
+                    userIcon.addEventListener('click', toggleDropdown);
+                }
+
+                // Fermer le menu si on clique ailleurs
+                document.addEventListener('click', closeDropdown);
             } catch (error) {
                 console.error('Erreur lors de l\'initialisation de la page:', error);
                 showMessage('Erreur lors du chargement de la page.', false);
@@ -572,6 +581,20 @@
             if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
                 auth.logout();
                 window.location.href = 'login.html';
+            }
+        }
+
+        // Gestion du menu déroulant
+        function toggleDropdown() {
+            const dropdown = document.querySelector('.dropdown-user');
+            dropdown.classList.toggle('open');
+        }
+
+        // Fermer le menu si on clique ailleurs
+        function closeDropdown(event) {
+            const dropdown = document.querySelector('.dropdown-user');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('open');
             }
         }
 
