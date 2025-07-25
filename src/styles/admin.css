@@ -421,3 +421,72 @@
     padding: 6px 0;
     border-bottom: 1px solid #e3f3d2;
 }
+
+/* Styles pour le menu déroulant admin */
+.dropdown-user {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #F2EFC6;
+    min-width: 170px;
+    box-shadow: 0 2px 8px rgba(198, 221, 168, 0.8);
+    z-index: 1000;
+    border-radius: 4px;
+    margin-top: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(32, 92, 44, 0.1);
+}
+
+.dropdown-content a, 
+.dropdown-content button {
+    color: #084229;
+    padding: 12px 18px;
+    text-decoration: none;
+    display: block;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1.08em;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.dropdown-content a:hover, 
+.dropdown-content button:hover {
+    background-color: #084229;
+    color: white;
+    transform: translateX(2px);
+}
+
+.dropdown-user.open .dropdown-content {
+    display: block;
+    animation: slideDown 0.2s ease-out;
+}
+
+.navbar-icon-user {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.navbar-icon-user:hover {
+    transform: scale(1.05);
+}
+
+/* Animation pour l'ouverture du menu */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
