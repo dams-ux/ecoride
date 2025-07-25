@@ -112,6 +112,44 @@
             content: '✅';
             margin-right: 0.5rem;
         }
+
+        /* Styles pour le menu déroulant */
+        .dropdown-user {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a, .dropdown-content button {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .dropdown-content a:hover, .dropdown-content button:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown-user:hover .dropdown-content {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -119,11 +157,26 @@
     <nav class="navbar-ecoride">
         <div class="navbar-left">
             <img src="assets/image voiture.png" alt="EcoRide" class="navbar-logo">
+            <span style="color: white; font-weight: bold; margin-left: 0.5rem;">ADMIN</span>
         </div>
         <div class="navbar-center">
             <a href="../index.html" class="navbar-btn">🏠 Accueil</a>
             <a href="admin-dashboard.html" class="navbar-btn">📊 Administration</a>
             <a href="login.html" class="navbar-btn">🔐 Connexion</a>
+        </div>
+        <div class="navbar-right">
+            <div class="dropdown-user">
+                <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                    <img src="assets/Icon.png" alt="Admin" style="height:32px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle;">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content">
+                    <a href="admin-profile.html">Mon profil</a>
+                    <button onclick="handleLogout()" style="background: none; border: none; color: inherit; cursor: pointer; text-align: left; width: 100%;">Déconnexion</button>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -245,6 +298,23 @@
     </div>
 
     <script>
+        // Fonction de déconnexion
+        function handleLogout() {
+            try {
+                if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                    // Nettoyer les données locales
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    
+                    // Rediriger vers la page de connexion admin
+                    window.location.href = 'admin-login.html';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la déconnexion:', error);
+                window.location.href = 'admin-login.html';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🎉 Système d\'administration EcoRide chargé avec succès !');
             
