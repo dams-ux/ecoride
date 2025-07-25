@@ -7,115 +7,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <link rel="stylesheet" href="../styles/navfooter.css">
     <link rel="stylesheet" href="../styles/admin.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f2efc6 0%, #e8f5e8 100%);
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .test-container {
-            max-width: 900px;
-            margin: 2rem auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-        }
-        
-        .test-title {
-            color: #205c2c;
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2.5rem;
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-        
-        .feature-card {
-            background: linear-gradient(135deg, #205c2c 0%, #2d7a35 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .feature-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-        
-        .admin-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .admin-link {
-            display: block;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-            text-decoration: none;
-            padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-        
-        .admin-link:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-        }
-        
-        .status-section {
-            background: #f9fafb;
-            border: 2px solid #10b981;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-        
-        .status-title {
-            color: #10b981;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-        
-        .check-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
-            color: #10b981;
-            font-weight: 500;
-        }
-        
-        .check-item::before {
-            content: '✅';
-            margin-right: 0.5rem;
-        }
-    </style>
 </head>
-<body>
+<body class="admin-complete-body">
     <!-- Navbar -->
     <nav class="navbar-ecoride">
         <div class="navbar-left">
@@ -311,22 +204,6 @@
                 card.style.animation = 'slideInUp 0.6s ease forwards';
             });
         });
-
-        // Animation CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
