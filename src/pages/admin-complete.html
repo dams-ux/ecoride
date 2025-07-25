@@ -123,17 +123,18 @@
             display: none;
             position: absolute;
             right: 0;
-            background-color: white;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-            border-radius: 5px;
+            background-color: #F2EFC6;
+            min-width: 170px;
+            box-shadow: 0 2px 8px rgba(198, 221, 168, 0.8);
+            z-index: 1000;
+            border-radius: 4px;
+            margin-top: 8px;
             overflow: hidden;
         }
 
         .dropdown-content a, .dropdown-content button {
-            color: #333;
-            padding: 12px 16px;
+            color: #084229;
+            padding: 12px 18px;
             text-decoration: none;
             display: block;
             border: none;
@@ -141,14 +142,21 @@
             width: 100%;
             text-align: left;
             cursor: pointer;
+            font-size: 1.08em;
+            transition: background 0.2s;
         }
 
         .dropdown-content a:hover, .dropdown-content button:hover {
-            background-color: #f1f1f1;
+            background-color: #084229;
+            color: white;
         }
 
-        .dropdown-user:hover .dropdown-content {
+        .dropdown-user.open .dropdown-content {
             display: block;
+        }
+
+        .navbar-icon-user {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -315,8 +323,31 @@
             }
         }
 
+        // Gestion du menu déroulant
+        function toggleDropdown() {
+            const dropdown = document.querySelector('.dropdown-user');
+            dropdown.classList.toggle('open');
+        }
+
+        // Fermer le menu si on clique ailleurs
+        function closeDropdown(event) {
+            const dropdown = document.querySelector('.dropdown-user');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('open');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🎉 Système d\'administration EcoRide chargé avec succès !');
+            
+            // Ajouter l'événement de clic pour le menu déroulant
+            const userIcon = document.querySelector('.navbar-icon-user');
+            if (userIcon) {
+                userIcon.addEventListener('click', toggleDropdown);
+            }
+
+            // Fermer le menu si on clique ailleurs
+            document.addEventListener('click', closeDropdown);
             
             // Animation des cartes
             const cards = document.querySelectorAll('.feature-card');
