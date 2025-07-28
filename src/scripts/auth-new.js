@@ -21,7 +21,7 @@ class AuthManager {
                 } else if (result.user.role === 'conducteur') {
                     redirectUrl = 'comptecon-new.html';
                 } else {
-                    redirectUrl = 'comptevoyageur.html';
+                    redirectUrl = 'comptevoyageur-new.html';
                 }
                 
                 return {
@@ -115,7 +115,7 @@ class AuthManager {
             } else if (user.role === 'conducteur') {
                 redirectUrl = 'comptecon-new.html';
             } else {
-                redirectUrl = 'comptevoyageur.html';
+                redirectUrl = 'comptevoyageur-new.html';
             }
             window.location.href = redirectUrl;
         }
