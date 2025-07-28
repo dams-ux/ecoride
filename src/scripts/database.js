@@ -577,6 +577,69 @@ class DatabaseSimulator {
         }
     }
 
+    // Inscription d'un nouvel utilisateur
+    registerUser(userData) {
+        try {
+            const { nom, prenom, email, password, role, telephone } = userData;
+            
+            // Vérifier si l'email existe déjà
+            const existingConducteur = this.conducteurs.find(c => c.email === email);
+            const existingVoyageur = this.voyageurs.find(v => v.email === email);
+            
+            if (existingConducteur || existingVoyageur) {
+                return {
+                    success: false,
+                    message: 'Cette adresse email est déjà utilisée.'
+                };
+            }
+            
+            // Créer le nouvel utilisateur
+            const newUser = {
+                id: Date.now(), // Simple ID basé sur timestamp
+                nom: nom.toLowerCase(),
+                prenom: prenom.toLowerCase(),
+                email: email,
+                password_hash: '$2y$10$simulated_hash_' + Date.now(),
+                password_plain: password, // Pour la simulation
+                photo: null,
+                telephone: telephone || null
+            };
+            
+            // Ajouter selon le rôle
+            if (role === 'conducteur') {
+                this.conducteurs.push(newUser);
+            } else if (role === 'voyageur') {
+                this.voyageurs.push(newUser);
+            } else {
+                return {
+                    success: false,
+                    message: 'Rôle utilisateur non valide.'
+                };
+            }
+            
+            console.log(`Nouvel utilisateur créé: ${prenom} ${nom} (${role})`);
+            
+            return {
+                success: true,
+                message: 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.',
+                user: {
+                    id: newUser.id,
+                    nom: this.capitalizeFirst(newUser.nom),
+                    prenom: this.capitalizeFirst(newUser.prenom),
+                    email: newUser.email,
+                    role: role
+                }
+            };
+            
+        } catch (error) {
+            console.error('Erreur lors de l\'inscription:', error);
+            return {
+                success: false,
+                message: 'Erreur lors de la création du compte.'
+            };
+        }
+    }
+
     // Utilitaire pour capitaliser la première lettre
     capitalizeFirst(str) {
         if (!str) return '';

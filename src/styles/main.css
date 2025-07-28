@@ -136,10 +136,10 @@ header {
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 8px #b6e2a1;
-    padding: 30px 24px;
+    padding: 80px 24px;
+    gap: 24px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
 }
 .rides-header {
     font-size: 1.2em;
@@ -174,12 +174,12 @@ header {
 }
 .ride-details {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 2px;
     font-size: 1em;
 }
 .eco-label {
-    background: #4e944f;
+    background: #ffffff;
     color: #fff;
     font-size: 0.9em;
     border-radius: 8px;

@@ -8,7 +8,7 @@ class AuthManager {
     async login(email, password) {
         try {
             // Tentative de connexion via Supabase
-            const result = database.authenticateUser(email, password);
+            const result = await database.authenticateUser(email, password);
             
             if (result.success) {
                 // Sauvegarder l'utilisateur dans localStorage
@@ -47,7 +47,7 @@ class AuthManager {
     // Inscription utilisateur avec base de données Supabase
     async register(userData) {
         try {
-            const result = await database.registerUser(userData);
+            const result = database.registerUser(userData);
             return result;
         } catch (error) {
             console.error('Erreur d\'inscription:', error);

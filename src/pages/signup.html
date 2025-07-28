@@ -1,0 +1,397 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - ECORIDE</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/navfooter.css">
+    <style>
+        .signup-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .ecoride-logo {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .signup-container h2 {
+            text-align: center;
+            color: #205c2c;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #205c2c;
+            box-shadow: 0 0 0 3px rgba(32, 92, 44, 0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .role-selection {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .role-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .role-option.selected {
+            border-color: #205c2c;
+            background: #f0f9f1;
+        }
+
+        .role-option:hover {
+            border-color: #205c2c;
+        }
+
+        .signup-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #205c2c 0%, #2d7a39 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .signup-btn:hover {
+            background: linear-gradient(135deg, #1e5128 0%, #246b2a 100%);
+            transform: translateY(-2px);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #205c2c;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        #signup-message {
+            margin-bottom: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .password-requirements {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar-ecoride">
+        <div class="navbar-left">
+            <img src="assets/image voiture.png" alt="image voiture" class="navbar-logo">
+        </div>
+        <div class="navbar-center">
+            <a href="../index.html" class="navbar-btn">Accueil</a>
+            <a href="covoiturage-new.html" class="navbar-btn">Covoiturage</a>
+            <a href="#" class="navbar-btn">Contact</a>
+        </div>
+        <div class="navbar-right" style="position:relative;">
+            <div class="dropdown-user">
+                <span class="navbar-icon-user" style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+                    <img src="assets/Icon.png" alt="Utilisateur" style="height:32px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" style="vertical-align:middle; margin-left:3px;">
+                        <polyline points="6 9 12 15 18 9" fill="none" stroke="#205c2c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <div class="dropdown-content">
+                    <a href="login.html">Connexion</a>
+                    <a href="signup-new.html">Inscription</a>
+                </div>
+            </div>
+            <img src="assets/image energie.png" alt="Energie" class="navbar-energie">
+        </div>
+    </nav>
+
+    <div class="signup-container">
+        <div class="ecoride-logo">🌱</div>
+        <h2>Créer un compte EcoRide</h2>
+        
+        <div id="signup-message"></div>
+        
+        <form id="signup-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nom">Nom</label>
+                    <input type="text" id="nom" name="nom" required placeholder="Votre nom">
+                </div>
+                <div class="form-group">
+                    <label for="prenom">Prénom</label>
+                    <input type="text" id="prenom" name="prenom" required placeholder="Votre prénom">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Adresse e-mail</label>
+                <input type="email" id="email" name="email" required placeholder="votre@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="telephone">Téléphone (optionnel)</label>
+                <input type="tel" id="telephone" name="telephone" placeholder="06 12 34 56 78">
+            </div>
+
+            <div class="form-group">
+                <label>Type de compte</label>
+                <div class="role-selection">
+                    <div class="role-option" data-role="conducteur">
+                        <strong>🚗 Conducteur</strong>
+                        <div style="font-size: 12px; margin-top: 5px;">
+                            Proposer des trajets
+                        </div>
+                    </div>
+                    <div class="role-option" data-role="voyageur">
+                        <strong>🎒 Voyageur</strong>
+                        <div style="font-size: 12px; margin-top: 5px;">
+                            Rechercher des trajets
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="role" name="role" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required placeholder="Choisir un mot de passe">
+                <div class="password-requirements">
+                    Le mot de passe doit contenir au moins 8 caractères avec au moins une majuscule, une minuscule et un chiffre.
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm-password">Confirmer le mot de passe</label>
+                <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirmer le mot de passe">
+            </div>
+            
+            <button type="submit" class="signup-btn">Créer mon compte</button>
+        </form>
+        
+        <p class="login-link">
+            Déjà inscrit ? <a href="login.html">Se connecter</a>
+        </p>
+    </div>
+
+    <footer class="footer-ecoride">
+        <p>Mentions Légales</p>
+        <p>ecoridenature@hotmail.fr</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../scripts/supabase-client.js"></script>
+    <script src="../scripts/auth-new.js"></script>
+    <script>
+        let selectedRole = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupRoleSelection();
+            setupFormSubmission();
+        });
+
+        function setupRoleSelection() {
+            const roleOptions = document.querySelectorAll('.role-option');
+            const roleInput = document.getElementById('role');
+            
+            roleOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Retirer la sélection précédente
+                    roleOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Ajouter la sélection actuelle
+                    this.classList.add('selected');
+                    selectedRole = this.dataset.role;
+                    roleInput.value = selectedRole;
+                });
+            });
+        }
+
+        function setupFormSubmission() {
+            document.getElementById('signup-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const userData = Object.fromEntries(formData);
+                
+                // Validation
+                if (!validateForm(userData)) {
+                    return;
+                }
+                
+                // Tentative d'inscription
+                showMessage('Création du compte en cours...', 'info');
+                
+                try {
+                    const result = await auth.register(userData);
+                    
+                    showMessage(result.message, result.success ? 'success' : 'error');
+                    
+                    if (result.success) {
+                        setTimeout(() => {
+                            window.location.href = 'login.html?message=Inscription réussie ! Vous pouvez maintenant vous connecter.';
+                        }, 2000);
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de l\'inscription:', error);
+                    showMessage('Erreur lors de l\'inscription. Veuillez réessayer.', 'error');
+                }
+            });
+        }
+
+        function validateForm(userData) {
+            // Vérifier que tous les champs requis sont remplis
+            if (!userData.nom || !userData.prenom || !userData.email || !userData.password || !userData.role) {
+                showMessage('Veuillez remplir tous les champs obligatoires.', 'error');
+                return false;
+            }
+
+            // Vérifier le format de l'email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(userData.email)) {
+                showMessage('Veuillez entrer une adresse email valide.', 'error');
+                return false;
+            }
+
+            // Vérifier la robustesse du mot de passe
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
+            if (!passwordRegex.test(userData.password)) {
+                showMessage('Le mot de passe doit contenir au moins 8 caractères avec une majuscule, une minuscule et un chiffre.', 'error');
+                return false;
+            }
+
+            // Vérifier la confirmation du mot de passe
+            if (userData.password !== userData['confirm-password']) {
+                showMessage('Les mots de passe ne correspondent pas.', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('signup-message');
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            
+            // Couleurs selon le type de message
+            switch(type) {
+                case 'success':
+                    messageDiv.style.backgroundColor = '#d4edda';
+                    messageDiv.style.color = '#155724';
+                    messageDiv.style.border = '1px solid #c3e6cb';
+                    break;
+                case 'error':
+                    messageDiv.style.backgroundColor = '#f8d7da';
+                    messageDiv.style.color = '#721c24';
+                    messageDiv.style.border = '1px solid #f5c6cb';
+                    break;
+                case 'info':
+                    messageDiv.style.backgroundColor = '#d1ecf1';
+                    messageDiv.style.color = '#0c5460';
+                    messageDiv.style.border = '1px solid #bee5eb';
+                    break;
+            }
+            
+            // Masquer le message après 5 secondes (sauf pour les succès)
+            if (type !== 'success') {
+                setTimeout(() => messageDiv.style.display = 'none', 5000);
+            }
+        }
+
+        // Gestion du menu déroulant
+        function toggleDropdown() {
+            const dropdown = document.querySelector('.dropdown-user');
+            dropdown.classList.toggle('open');
+        }
+
+        // Fermer le menu si on clique ailleurs
+        function closeDropdown(event) {
+            const dropdown = document.querySelector('.dropdown-user');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.remove('open');
+            }
+        }
+
+        // Ajouter les event listeners au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ajouter l'événement de clic pour le menu déroulant
+            const userIcon = document.querySelector('.navbar-icon-user');
+            if (userIcon) {
+                userIcon.addEventListener('click', toggleDropdown);
+            }
+
+            // Fermer le menu si on clique ailleurs
+            document.addEventListener('click', closeDropdown);
+        });
+
+        // Vérifier si l'utilisateur est déjà connecté
+        if (auth && auth.isLoggedIn()) {
+            const currentUser = auth.getCurrentUser();
+            const redirectUrl = currentUser.role === 'conducteur' ? 'comptecon-new.html' : 'comptevoyageur.html';
+            window.location.href = redirectUrl;
+        }
+    </script>
+</body>
+</html>
+
