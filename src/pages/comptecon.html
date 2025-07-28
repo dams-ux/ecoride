@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -15,8 +15,8 @@
             <img src="assets/image voiture.png" alt="image voiture" class="navbar-logo">
         </div>
         <div class="navbar-center">
-            <a href="../../index.html" class="navbar-btn">Accueil</a>
-            <a href="covoiturage.html" class="navbar-btn">Covoiturage</a>
+            <a href="../index.html" class="navbar-btn">Accueil</a>
+            <a href="covoiturage-new.html" class="navbar-btn">Covoiturage</a>
             <a href="#" class="navbar-btn">Contact</a>
         </div>
         <div class="navbar-right" style="position:relative;">
@@ -209,77 +209,38 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="../scripts/database.js"></script>
+    <script src="../scripts/supabase-client.js"></script>
     <script src="../scripts/auth.js"></script>
     <script>
         // Variables globales
         let currentUser = null;
 
-        // Validation de l'environnement
-        if (typeof database === 'undefined') {
-            console.error('ERREUR: database.js n\'est pas chargé correctement');
-        }
-        if (typeof auth === 'undefined') {
-            console.error('ERREUR: auth.js n\'est pas chargé correctement');
-        }
-
         // Initialisation de la page
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                if (!checkAuth()) return;
-                
-                loadUserProfile();
-                loadUserStats();
-                loadVehicules();
-                loadTrajets();
-                loadReservations();
-                setupEventListeners();
-                
-                // Ajouter l'événement de clic pour le menu déroulant
-                const userIcon = document.querySelector('.navbar-icon-user');
-                if (userIcon) {
-                    userIcon.addEventListener('click', toggleDropdown);
-                }
-
-                // Fermer le menu si on clique ailleurs
-                document.addEventListener('click', closeDropdown);
-            } catch (error) {
-                console.error('Erreur lors de l\'initialisation de la page:', error);
-                showMessage('Erreur lors du chargement de la page.', false);
-            }
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (!checkAuth()) return;
+            
+            await loadUserProfile();
+            await loadUserStats();
+            await loadVehicules();
+            await loadTrajets();
+            await loadReservations();
+            setupEventListeners();
         });
 
         // Vérification d'authentification
         function checkAuth() {
-            try {
-                if (typeof auth === 'undefined') {
-                    console.error('Le module auth n\'est pas disponible');
-                    window.location.href = 'login.html';
-                    return false;
-                }
-                
-                if (!auth.isLoggedIn()) {
-                    window.location.href = 'login.html';
-                    return false;
-                }
-                
-                currentUser = auth.getCurrentUser();
-                if (!currentUser) {
-                    window.location.href = 'login.html';
-                    return false;
-                }
-                
-                if (currentUser.role !== 'conducteur') {
-                    alert('Cette page est réservée aux conducteurs.');
-                    window.location.href = 'login.html';
-                    return false;
-                }
-                return true;
-            } catch (error) {
-                console.error('Erreur lors de la vérification d\'authentification:', error);
+            if (!auth.isLoggedIn()) {
                 window.location.href = 'login.html';
                 return false;
             }
+            
+            currentUser = auth.getCurrentUser();
+            if (currentUser.role !== 'conducteur') {
+                alert('Cette page est réservée aux conducteurs.');
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
         }
 
         // Charger le profil utilisateur
@@ -289,37 +250,34 @@
             if (currentUser.photo && currentUser.photo !== 'assets/default-avatar.svg') {
                 document.getElementById('user-photo').src = currentUser.photo;
             }
+
+            // Remplir le formulaire de profil
+            document.getElementById('profil-nom').value = currentUser.nom || '';
+            document.getElementById('profil-prenom').value = currentUser.prenom || '';
+            document.getElementById('profil-email').value = currentUser.email || '';
         }
 
         // Charger les statistiques utilisateur
-        function loadUserStats() {
+        async function loadUserStats() {
             try {
-                const trajets = database.getConducteurTrajets(currentUser.id);
-                const reservations = database.getConducteurReservations(currentUser.id);
-                const rating = database.getUserRating(currentUser.id, 'conducteur');
+                const trajets = await database.getConducteurTrajets(currentUser.id);
+                const reservations = await database.getConducteurReservations(currentUser.id);
+                const rating = await database.getUserRating(currentUser.id, 'conducteur');
                 
                 document.getElementById('trajets-count').textContent = trajets.length;
                 document.getElementById('reservations-count').textContent = reservations.length;
                 document.getElementById('user-rating').textContent = rating.average + '/5';
             } catch (error) {
-                console.error('Erreur lors du chargement des statistiques:', error);
-                document.getElementById('trajets-count').textContent = '0';
-                document.getElementById('reservations-count').textContent = '0';
-                document.getElementById('user-rating').textContent = '0.0';
+                console.error('Erreur chargement stats:', error);
             }
         }
 
         // Charger les véhicules
-        function loadVehicules() {
+        async function loadVehicules() {
             try {
-                const vehicules = database.getConducteurVehicules(currentUser.id);
+                const vehicules = await database.getConducteurVehicules(currentUser.id);
                 const container = document.getElementById('vehicules-list');
                 const select = document.getElementById('vehicule');
-                
-                if (!container) {
-                    console.error('Container vehicules-list non trouvé');
-                    return;
-                }
                 
                 // Afficher les véhicules
                 if (vehicules.length === 0) {
@@ -347,164 +305,195 @@
                         vehicules.map(v => `<option value="${v.id}">${v.marque} ${v.modele}</option>`).join('');
                 }
             } catch (error) {
-                console.error('Erreur lors du chargement des véhicules:', error);
-                const container = document.getElementById('vehicules-list');
-                if (container) {
-                    container.innerHTML = '<p>Erreur lors du chargement des véhicules.</p>';
-                }
+                console.error('Erreur chargement véhicules:', error);
             }
         }
 
         // Charger les trajets
-        function loadTrajets() {
-            const trajets = database.getConducteurTrajets(currentUser.id);
-            const container = document.getElementById('trajets-list');
-            
-            if (trajets.length === 0) {
-                container.innerHTML = '<p>Aucun trajet créé.</p>';
-                return;
-            }
-            
-            container.innerHTML = trajets.map(trajet => {
-                const vehicule = database.vehicules.find(v => v.id === trajet.vehicule_id);
-                const dateDepart = new Date(trajet.date_depart).toLocaleString();
-                const dateArriver = new Date(trajet.date_arriver).toLocaleString();
+        async function loadTrajets() {
+            try {
+                const trajets = await database.getConducteurTrajets(currentUser.id);
+                const container = document.getElementById('trajets-list');
                 
-                return `
-                    <div class="trajet-card">
-                        <div class="trajet-header">
-                            <h4>${trajet.depart} → ${trajet.arrivee}</h4>
-                            <span class="trajet-prix">${trajet.prix}€</span>
+                if (trajets.length === 0) {
+                    container.innerHTML = '<p>Aucun trajet créé.</p>';
+                    return;
+                }
+                
+                container.innerHTML = trajets.map(trajet => {
+                    const dateDepart = new Date(trajet.date_depart).toLocaleString();
+                    const dateArriver = new Date(trajet.date_arrivee || trajet.date_arriver).toLocaleString();
+                    
+                    return `
+                        <div class="trajet-card">
+                            <div class="trajet-header">
+                                <h4>${trajet.depart} → ${trajet.arrivee}</h4>
+                                <span class="trajet-prix">${trajet.prix}€</span>
+                            </div>
+                            <div class="trajet-details">
+                                <p><strong>Départ:</strong> ${dateDepart}</p>
+                                <p><strong>Arrivée:</strong> ${dateArriver}</p>
+                                <p><strong>Places disponibles:</strong> ${trajet.places_disponibles}/${trajet.places_totales}</p>
+                                <p><strong>Statut:</strong> ${trajet.statut}</p>
+                            </div>
+                            <div class="trajet-actions">
+                                <button onclick="deleteTrajet(${trajet.id})" class="btn-danger">Supprimer</button>
+                            </div>
                         </div>
-                        <div class="trajet-details">
-                            <p><strong>Départ:</strong> ${dateDepart}</p>
-                            <p><strong>Arrivée:</strong> ${dateArriver}</p>
-                            <p><strong>Places disponibles:</strong> ${trajet.places_disponibles}/${trajet.places_totales || 4}</p>
-                            <p><strong>Véhicule:</strong> ${vehicule ? `${vehicule.marque} ${vehicule.modele}` : 'Non spécifié'}</p>
-                        </div>
-                        <div class="trajet-actions">
-                            <button onclick="deleteTrajet(${trajet.id})" class="btn-danger">Supprimer</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Erreur chargement trajets:', error);
+            }
         }
 
         // Charger les réservations
-        function loadReservations() {
-            const reservations = database.getConducteurReservations(currentUser.id);
-            const container = document.getElementById('reservations-list');
-            
-            if (reservations.length === 0) {
-                container.innerHTML = '<p>Aucune réservation pour vos trajets.</p>';
-                return;
-            }
-            
-            container.innerHTML = reservations.map(reservation => {
-                const dateReservation = new Date(reservation.date_reservation).toLocaleString();
-                const dateDepart = new Date(reservation.trajet.date_depart).toLocaleString();
+        async function loadReservations() {
+            try {
+                const reservations = await database.getConducteurReservations(currentUser.id);
+                const container = document.getElementById('reservations-list');
                 
-                return `
-                    <div class="reservation-card">
-                        <div class="reservation-header">
-                            <h4>${reservation.trajet.depart} → ${reservation.trajet.arrivee}</h4>
-                            <span class="reservation-status status-${reservation.statut}">${reservation.statut}</span>
+                if (reservations.length === 0) {
+                    container.innerHTML = '<p>Aucune réservation pour vos trajets.</p>';
+                    return;
+                }
+                
+                container.innerHTML = reservations.map(reservation => {
+                    const dateReservation = new Date(reservation.date_reservation).toLocaleString();
+                    const dateDepart = new Date(reservation.trajets.date_depart).toLocaleString();
+                    
+                    return `
+                        <div class="reservation-card">
+                            <div class="reservation-header">
+                                <h4>${reservation.trajets.depart} → ${reservation.trajets.arrivee}</h4>
+                                <span class="reservation-status status-${reservation.statut}">${reservation.statut}</span>
+                            </div>
+                            <div class="reservation-details">
+                                <p><strong>Voyageur:</strong> ${reservation.users.prenom} ${reservation.users.nom}</p>
+                                <p><strong>Places réservées:</strong> ${reservation.nb_places}</p>
+                                <p><strong>Date du trajet:</strong> ${dateDepart}</p>
+                                <p><strong>Réservé le:</strong> ${dateReservation}</p>
+                            </div>
+                            <div class="reservation-actions">
+                                <button onclick="accepterReservation(${reservation.id})" class="btn-success">Accepter</button>
+                                <button onclick="refuserReservation(${reservation.id})" class="btn-danger">Refuser</button>
+                            </div>
                         </div>
-                        <div class="reservation-details">
-                            <p><strong>Voyageur:</strong> ${reservation.voyageur.nom}</p>
-                            <p><strong>Places réservées:</strong> ${reservation.nb_places}</p>
-                            <p><strong>Date du trajet:</strong> ${dateDepart}</p>
-                            <p><strong>Réservé le:</strong> ${dateReservation}</p>
-                        </div>
-                        <div class="reservation-actions">
-                            <button onclick="accepterReservation(${reservation.id})" class="btn-success">Accepter</button>
-                            <button onclick="refuserReservation(${reservation.id})" class="btn-danger">Refuser</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Erreur chargement réservations:', error);
+            }
         }
 
         // Configuration des event listeners
         function setupEventListeners() {
             // Formulaire véhicule
-            document.getElementById('vehicle-form').addEventListener('submit', function(e) {
+            document.getElementById('vehicle-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const formData = new FormData(e.target);
                 const vehicule = Object.fromEntries(formData);
                 
-                const result = database.addVehicule({
-                    ...vehicule,
-                    conducteur_id: currentUser.id
-                });
-                
-                showMessage(result.message, result.success);
-                if (result.success) {
-                    loadVehicules();
-                    e.target.reset();
+                try {
+                    const result = await database.addVehicule({
+                        ...vehicule,
+                        conducteur_id: currentUser.id
+                    });
+                    
+                    showMessage(result.message, result.success);
+                    if (result.success) {
+                        await loadVehicules();
+                        e.target.reset();
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de l\'ajout du véhicule:', error);
+                    showMessage('Erreur lors de l\'ajout du véhicule.', false);
                 }
             });
 
             // Formulaire trajet
-            document.getElementById('trajet-form').addEventListener('submit', function(e) {
+            document.getElementById('trajet-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const formData = new FormData(e.target);
-                const trajet = Object.fromEntries(formData);
+                const trajetData = Object.fromEntries(formData);
                 
-                const result = database.addTrajet({
-                    ...trajet,
-                    conducteur_id: currentUser.id,
-                    prix: parseFloat(trajet.tarif),
-                    places_disponibles: parseInt(trajet.nb_places),
-                    places_totales: parseInt(trajet.nb_places),
-                    vehicule_id: parseInt(trajet.vehicule)
-                });
-                
-                showMessage(result.message, result.success);
-                if (result.success) {
-                    loadTrajets();
-                    loadUserStats();
-                    e.target.reset();
+                try {
+                    const result = await database.addTrajet({
+                        conducteur_id: currentUser.id,
+                        vehicule_id: parseInt(trajetData.vehicule),
+                        depart: trajetData.depart,
+                        arrivee: trajetData.arrivee,
+                        date_depart: trajetData.date_depart,
+                        date_arrivee: trajetData.date_arriver,
+                        prix: parseFloat(trajetData.tarif),
+                        places_totales: parseInt(trajetData.nb_places),
+                        places_disponibles: parseInt(trajetData.nb_places)
+                    });
+                    
+                    showMessage(result.message, result.success);
+                    if (result.success) {
+                        await loadTrajets();
+                        await loadUserStats();
+                        e.target.reset();
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de la création du trajet:', error);
+                    showMessage('Erreur lors de la création du trajet.', false);
                 }
             });
 
             // Formulaire profil
-            document.getElementById('profil-form').addEventListener('submit', function(e) {
+            document.getElementById('profil-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const formData = new FormData(e.target);
                 const profileData = Object.fromEntries(formData);
                 
-                const result = database.updateUserProfile(currentUser.id, 'conducteur', profileData);
-                showMessage(result.message, result.success);
-                
-                if (result.success) {
-                    // Mettre à jour l'utilisateur courant
-                    currentUser = { ...currentUser, ...profileData };
-                    auth.updateCurrentUser(currentUser);
-                    loadUserProfile();
+                try {
+                    const result = await database.updateUserProfile(currentUser.id, profileData);
+                    showMessage(result.message, result.success);
+                    
+                    if (result.success) {
+                        // Mettre à jour l'utilisateur courant
+                        currentUser = { ...currentUser, ...profileData };
+                        auth.updateCurrentUser(currentUser);
+                        loadUserProfile();
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de la mise à jour du profil:', error);
+                    showMessage('Erreur lors de la mise à jour du profil.', false);
                 }
             });
         }
 
         // Fonctions d'actions
-        function deleteVehicule(id) {
+        async function deleteVehicule(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer ce véhicule ?')) {
-                const result = database.deleteVehicule(id);
-                showMessage(result.message, result.success);
-                if (result.success) {
-                    loadVehicules();
+                try {
+                    const result = await database.deleteVehicule(id);
+                    showMessage(result.message, result.success);
+                    if (result.success) {
+                        await loadVehicules();
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de la suppression du véhicule:', error);
+                    showMessage('Erreur lors de la suppression.', false);
                 }
             }
         }
 
-        function deleteTrajet(id) {
+        async function deleteTrajet(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer ce trajet ?')) {
-                const result = database.deleteTrajet(id);
-                showMessage(result.message, result.success);
-                if (result.success) {
-                    loadTrajets();
-                    loadUserStats();
-                    loadReservations();
+                try {
+                    const result = await database.deleteTrajet(id);
+                    showMessage(result.message, result.success);
+                    if (result.success) {
+                        await loadTrajets();
+                        await loadUserStats();
+                        await loadReservations();
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de la suppression du trajet:', error);
+                    showMessage('Erreur lors de la suppression.', false);
                 }
             }
         }
@@ -580,32 +569,123 @@
         function handleLogout() {
             if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
                 auth.logout();
-                window.location.href = 'login.html';
             }
         }
-
-        // Gestion du menu déroulant
-        function toggleDropdown() {
-            const dropdown = document.querySelector('.dropdown-user');
-            dropdown.classList.toggle('open');
-        }
-
-        // Fermer le menu si on clique ailleurs
-        function closeDropdown(event) {
-            const dropdown = document.querySelector('.dropdown-user');
-            if (!dropdown.contains(event.target)) {
-                dropdown.classList.remove('open');
-            }
-        }
-
-        // Charger le profil dans le formulaire
-        window.addEventListener('load', function() {
-            if (currentUser) {
-                document.getElementById('profil-nom').value = currentUser.nom || '';
-                document.getElementById('profil-prenom').value = currentUser.prenom || '';
-                document.getElementById('profil-email').value = currentUser.email || '';
-            }
-        });
     </script>
-</body> 
+
+    <style>
+        /* Styles pour les stats utilisateur */
+        .user-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #205c2c;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Styles pour les cartes */
+        .vehicule-card, .trajet-card, .reservation-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #205c2c;
+        }
+
+        .vehicule-info h4, .trajet-header h4, .reservation-header h4 {
+            margin: 0 0 10px 0;
+            color: #205c2c;
+        }
+
+        .trajet-prix {
+            background: #205c2c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+
+        .btn-danger, .btn-success {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        /* Styles pour les énergies */
+        .energie-electrique {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .energie-hybride {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .energie-essence, .energie-diesel {
+            color: #6c757d;
+        }
+
+        /* Styles pour les statuts de réservation */
+        .reservation-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-confirmee {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-en_attente {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</body>
 </html>
+

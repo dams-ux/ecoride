@@ -241,7 +241,7 @@
 
     <!-- Scripts -->
     <script src="../scripts/supabase-client.js"></script>
-    <script src="../scripts/auth-new.js"></script>
+    <script src="../scripts/auth.js"></script>
     <script>
         let selectedRole = null;
 
@@ -388,7 +388,7 @@
         // Vérifier si l'utilisateur est déjà connecté
         if (auth && auth.isLoggedIn()) {
             const currentUser = auth.getCurrentUser();
-            const redirectUrl = currentUser.role === 'conducteur' ? 'comptecon-new.html' : 'comptevoyageur.html';
+            const redirectUrl = currentUser.role === 'conducteur' ? 'comptecon.html' : 'comptevoyageur.html';
             window.location.href = redirectUrl;
         }
     </script>
