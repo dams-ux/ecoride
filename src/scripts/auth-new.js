@@ -8,7 +8,7 @@ class AuthManager {
     async login(email, password) {
         try {
             // Tentative de connexion via Supabase
-            const result = database.authenticateUser(email, password);
+            const result = await database.authenticateUser(email, password);
             
             if (result.success) {
                 // Sauvegarder l'utilisateur dans localStorage
@@ -19,9 +19,9 @@ class AuthManager {
                 if (result.user.role === 'admin') {
                     redirectUrl = 'admin-dashboard.html';
                 } else if (result.user.role === 'conducteur') {
-                    redirectUrl = 'comptecon.html';
+                    redirectUrl = 'comptecon-new.html';
                 } else {
-                    redirectUrl = 'comptevoyageur.html';
+                    redirectUrl = 'comptevoyageur-new.html';
                 }
                 
                 return {
@@ -113,9 +113,9 @@ class AuthManager {
             if (user.role === 'admin') {
                 redirectUrl = 'admin-dashboard.html';
             } else if (user.role === 'conducteur') {
-                redirectUrl = 'comptecon.html';
+                redirectUrl = 'comptecon-new.html';
             } else {
-                redirectUrl = 'comptevoyageur.html';
+                redirectUrl = 'comptevoyageur-new.html';
             }
             window.location.href = redirectUrl;
         }

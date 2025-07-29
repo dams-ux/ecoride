@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Connexion Julie</title>
+</head>
+<body>
+    <h1>Test Connexion Julie</h1>
+    <div id="result"></div>
+    <button onclick="testJulie()">Test Connexion Julie</button>
+    <button onclick="showDatabase()">Voir Base de Données</button>
+
+    <script src="src/scripts/database.js"></script>
+    <script src="src/scripts/auth.js"></script>
+    <script>
+        window.onload = function() {
+            console.log('Database loaded:', typeof database);
+            console.log('Auth loaded:', typeof auth);
+        };
+
+        async function testJulie() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Test en cours...';
+            
+            try {
+                console.log('=== TEST CONNEXION JULIE ===');
+                
+                // Test direct database
+                const dbResult = database.authenticateUser('juliepop@hotmail.fr', 'Monvoyage6+');
+                console.log('Database result:', dbResult);
+                
+                // Test via auth system
+                const authResult = await auth.login('juliepop@hotmail.fr', 'Monvoyage6+');
+                console.log('Auth result:', authResult);
+                
+                resultDiv.innerHTML = `
+                    <h3>Résultats Test Julie:</h3>
+                    <p><strong>Database:</strong> ${JSON.stringify(dbResult, null, 2)}</p>
+                    <p><strong>Auth System:</strong> ${JSON.stringify(authResult, null, 2)}</p>
+                    <p><strong>LocalStorage:</strong> ${localStorage.getItem('ecoride_user')}</p>
+                `;
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                resultDiv.innerHTML = `<p style="color: red;">ERREUR: ${error.message}</p>`;
+            }
+        }
+        
+        function showDatabase() {
+            const resultDiv = document.getElementById('result');
+            if (typeof database !== 'undefined') {
+                resultDiv.innerHTML = `
+                    <h3>Voyageurs dans la base:</h3>
+                    <pre>${JSON.stringify(database.voyageurs, null, 2)}</pre>
+                `;
+            } else {
+                resultDiv.innerHTML = '<p style="color: red;">Database non chargée</p>';
+            }
+        }
+    </script>
+</body>
+</html>
