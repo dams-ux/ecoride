@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Rapide Julie</title>
+</head>
+<body>
+    <h1>Test Direct Julie</h1>
+    <button onclick="testJulie()">Test Julie</button>
+    <div id="result"></div>
+
+    <script src="src/scripts/database.js"></script>
+    <script src="src/scripts/auth.js"></script>
+    <script>
+        async function testJulie() {
+            const result = document.getElementById('result');
+            try {
+                console.log('=== TEST JULIE ===');
+                
+                // Vider le localStorage d'abord
+                localStorage.clear();
+                
+                // Test direct
+                const authResult = await auth.login('juliepop@hotmail.fr', 'Monvoyage6+');
+                console.log('Auth result:', authResult);
+                
+                // Vérifier le localStorage
+                const storedUser = localStorage.getItem('ecoride_user');
+                console.log('Stored user:', storedUser);
+                
+                // Vérifier isLoggedIn
+                const isLoggedIn = auth.isLoggedIn();
+                console.log('Is logged in:', isLoggedIn);
+                
+                // Vérifier getCurrentUser
+                const currentUser = auth.getCurrentUser();
+                console.log('Current user:', currentUser);
+                
+                result.innerHTML = `
+                    <h3>Résultats Test Julie:</h3>
+                    <p><strong>Auth result:</strong> ${JSON.stringify(authResult, null, 2)}</p>
+                    <p><strong>Stored in localStorage:</strong> ${storedUser}</p>
+                    <p><strong>Is logged in:</strong> ${isLoggedIn}</p>
+                    <p><strong>Current user:</strong> ${JSON.stringify(currentUser, null, 2)}</p>
+                    ${authResult && authResult.success ? 
+                        `<p style="color: green;"><strong>✅ SUCCESS! Redirect URL: ${authResult.redirectUrl}</strong></p>` : 
+                        `<p style="color: red;"><strong>❌ FAILED!</strong></p>`
+                    }
+                `;
+                
+                if (authResult && authResult.success) {
+                    setTimeout(() => {
+                        window.location.href = `src/pages/${authResult.redirectUrl}`;
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                console.error('ERREUR:', error);
+                result.innerHTML = `<p style="color: red;">ERREUR: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
